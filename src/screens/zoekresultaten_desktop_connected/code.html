@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+
+<html lang="nl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-fixed": "#1b1c1c",
+                        "surface-container-low": "#f3f3f4",
+                        "primary": "#000000",
+                        "on-tertiary-fixed-variant": "#e4e2e2",
+                        "on-primary-container": "#ffffff",
+                        "tertiary-fixed": "#5e5e5e",
+                        "secondary-container": "#d6d4d3",
+                        "on-error-container": "#410002",
+                        "on-primary-fixed-variant": "#e2e2e2",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f9f9f9",
+                        "secondary-fixed-dim": "#adabaa",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#3b3b3b",
+                        "outline": "#777777",
+                        "on-surface": "#1a1c1c",
+                        "surface-variant": "#e2e2e2",
+                        "tertiary-container": "#757474",
+                        "surface-tint": "#5e5e5e",
+                        "primary-container": "#3b3b3b",
+                        "on-tertiary-container": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#e2e2e2",
+                        "surface-container": "#eeeeee",
+                        "primary-fixed-dim": "#474747",
+                        "inverse-primary": "#c6c6c6",
+                        "on-tertiary-fixed": "#ffffff",
+                        "secondary": "#5f5e5e",
+                        "surface-container-high": "#e8e8e8",
+                        "tertiary-fixed-dim": "#464747",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#f0f1f1",
+                        "surface": "#f9f9f9",
+                        "on-background": "#1a1c1c",
+                        "on-secondary-container": "#1b1c1c",
+                        "primary-fixed": "#5e5e5e",
+                        "background": "#f9f9f9",
+                        "on-primary-fixed": "#ffffff",
+                        "surface-dim": "#dadada",
+                        "on-surface-variant": "#474747",
+                        "outline-variant": "#c6c6c6",
+                        "inverse-surface": "#2f3131",
+                        "on-secondary-fixed-variant": "#3c3b3b",
+                        "surface-container-highest": "#e2e2e2",
+                        "secondary-fixed": "#c8c6c5",
+                        "on-tertiary": "#e4e2e2"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9f9f9;
+        }
+        h1, h2, h3, .font-headline {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopNavBar -->
+<nav class="bg-surface/80 backdrop-blur-md docked full-width top-0 sticky z-50 flex justify-between items-center w-full px-8 py-6 max-w-full">
+<div class="flex items-center gap-12">
+<a class="text-3xl font-black tracking-tighter text-primary hover:opacity-80 transition-opacity" href="{{DATA:SCREEN:SCREEN_62}}">GEARHUUR</a>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label text-[12px] tracking-[0.05em]" href="#">ONTDEKKEN</a>
+<a class="text-on-surface-variant font-medium hover:bg-surface-dim transition-colors duration-100 font-label text-[12px] tracking-[0.05em]" href="#">MIJN VERHUUR</a>
+<a class="text-on-surface-variant font-medium hover:bg-surface-dim transition-colors duration-100 font-label text-[12px] tracking-[0.05em]" href="#">HELP</a>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<input class="bg-surface-container-high border-none px-4 py-2 w-64 text-sm focus:ring-1 focus:ring-primary" placeholder="Zoek gear..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-primary hover:bg-surface-dim p-2 transition-transform active:scale-95 duration-75">shopping_bag</button>
+<button class="material-symbols-outlined text-primary hover:bg-surface-dim p-2 transition-transform active:scale-95 duration-75">notifications_none</button>
+<div class="w-10 h-10 bg-surface-container-highest overflow-hidden cursor-pointer active:scale-95 transition-transform">
+<img alt="Gebruikersprofiel foto" class="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhqjlXPkb8alKOkxLzkGe0SNR4LWBhNtaf-npEW85uLf0bAjp4VWo1YFZr96km2ZDmoMxBIrmukKZfc1czRatjpdlGhv2kexQfBFDKak9w1mW2EUGPCicWt3X4DqqxesiAKw5ML6OZnaCrI8Pl8S5aAnO9sxfEH54ncAGtB1F8TOlY7MbKHZiMOVmTbJJrIL8-t-l3CtaN1tb3xem4YpIAqMw0eVhyR_J921qFm075JryicTBndDcYc4evGZSPYoFiP_O7_X80kyc"/>
+</div>
+</div>
+</nav>
+<div class="flex min-h-screen">
+<!-- SideNavBar / Filters -->
+<aside class="hidden md:flex flex-col gap-8 p-10 bg-surface-container-low docked left-0 h-screen w-80 sticky top-[88px] overflow-y-auto">
+<div class="mb-4">
+<h2 class="font-headline text-xs font-bold tracking-[0.05em] text-primary mb-1 uppercase">FILTERS</h2>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest">Verfijn resultaten</p>
+</div>
+<nav class="flex flex-col gap-4">
+<div class="flex items-center justify-between p-3 bg-primary text-on-primary font-bold cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">category</span>
+<span class="font-headline text-[12px] tracking-[0.05em] uppercase">CATEGORIE</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 text-primary hover:bg-surface-container-highest cursor-pointer group transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+<span class="font-headline text-[12px] tracking-[0.05em] uppercase">PRIJS</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 text-primary hover:bg-surface-container-highest cursor-pointer group transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">location_on</span>
+<span class="font-headline text-[12px] tracking-[0.05em] uppercase">LOCATIE</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 text-primary hover:bg-surface-container-highest cursor-pointer group transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">star_outline</span>
+<span class="font-headline text-[12px] tracking-[0.05em] uppercase">CONDITIE</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 text-primary hover:bg-surface-container-highest cursor-pointer group transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">event_available</span>
+<span class="font-headline text-[12px] tracking-[0.05em] uppercase">BESCHIKBAARHEID</span>
+</div>
+</div>
+</nav>
+<div class="mt-auto">
+<button class="w-full py-4 border border-outline/20 text-[10px] font-bold tracking-widest uppercase hover:bg-primary hover:text-on-primary transition-colors">
+                    Wis alle filters
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 p-8 md:p-12 lg:p-20">
+<!-- Search Header -->
+<header class="mb-16">
+<div class="flex items-baseline gap-4 mb-2">
+<h1 class="text-6xl md:text-8xl font-black font-headline tracking-tighter leading-none">MOUNTAINBIKES</h1>
+<span class="text-primary text-xl font-headline italic">In Nederland</span>
+</div>
+<div class="flex justify-between items-end border-b-4 border-primary pb-4">
+<p class="text-sm font-label tracking-widest uppercase text-on-surface-variant">8 Resultaten gevonden voor 'Gear2Go'</p>
+<div class="flex gap-4">
+<span class="text-xs font-bold tracking-widest uppercase">Sorteer op: RELEVANTIE</span>
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</div>
+</div>
+</header>
+<!-- Product Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12">
+<!-- Card 1 -->
+<a class="group cursor-pointer block" href="{{DATA:SCREEN:SCREEN_59}}">
+<div class="relative aspect-[4/5] bg-surface-container overflow-hidden mb-6">
+<img alt="Monochrome foto van Trek Fuel EX 9.8 mountainbike" class="w-full h-full object-cover grayscale transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7c5PCcSmuvZPp5TyBypJiGINBCf1F2CqAOk4WfqI50NxW1sSOdOCx57Q9Kmsl40BCIt7bCF_j4UPhkPRbxrp1vhi5CLpwKjX6JO-mRu37unMlU4bcw12crpdd3N84iQQD5ebuH7G08zFwHwEHC7QCpfWaNoQst88kZpnwnl7moyKAnsltSOeJVCg2G2Ug057v1YyhWbFFw9KB4pY4gByE-UMNc2-kpGBT0A-KW2IwusPdNK6NipBryIC-hV5gPofeVjCfLpSzAdg"/>
+<div class="absolute top-4 right-4 bg-primary text-on-primary px-3 py-1 text-[10px] font-bold tracking-widest uppercase">TOP DEAL</div>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-2xl font-black font-headline mb-1 tracking-tight group-hover:underline">Trek Fuel EX 9.8</h3>
+<p class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-4">AMSTERDAM-ZUID</p>
+</div>
+<div class="text-right">
+<p class="text-xl font-black font-headline tracking-tight">€45 / DAG</p>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-outline/10 pt-4 mt-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-surface-container-highest">
+<img alt="Profielfoto verhuurder" class="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNjuPTYnVFW6R4VxkiF-MtkCBa231RMrDChslHevZ9h1RuA-FnXy7p397F8q4hqx7TDiJd_1hdkoYZoojh3Pt8pWI-ndLFwe8K_tYNZFKUBImOl_WgTTb9CTidWjJZQjubHv3RKjGyzJNqhVG3645NbAZb34XwakZaOqAm5UB-XDOc3AKx-sPgsdtjV3aQV2BKoqizs5fax4SbObc4OCJHR456pc6zD62-SwSXX4j3qMZmsfsvrA3BnrQdZD92-qnEbUt6YGZcBp0"/>
+</div>
+<span class="text-[10px] font-bold tracking-widest uppercase">MARK V.</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold">4.9</span>
+</div>
+</div>
+</a>
+<!-- Card 2 -->
+<a class="group cursor-pointer block" href="{{DATA:SCREEN:SCREEN_59}}">
+<div class="relative aspect-[4/5] bg-surface-container overflow-hidden mb-6">
+<img alt="Monochrome foto van Specialized Stumpjumper" class="w-full h-full object-cover grayscale transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDa8ZDlWop0VtEd5UmECZXtV2UKbo5jjPFU8TTUpEsUoW02IuEAI2_wc3Gyb87RGZ-UA_FUMYn5cYfoyamUPZafkU9RAYt6g5Ps8PD0B_EpDscpbHUN5sXAgm5QfW-O4FVZUyuL_H9uFW_9uN9lmoD8_FWU-zAZ9SdmmDWNIuGlSvyJWmuG5zn2upnQPKDoAB0QCWHzu81b6dYEwfxKqYONBHm3fYrf7c9Vph7nmpCLPQxjXCoi61_bFsurUWDQ8Ejde32OZNS4Kn8"/>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-2xl font-black font-headline mb-1 tracking-tight group-hover:underline">Specialized Stumpjumper</h3>
+<p class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-4">UTRECHT CENTRUM</p>
+</div>
+<div class="text-right">
+<p class="text-xl font-black font-headline tracking-tight">€52 / DAG</p>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-outline/10 pt-4 mt-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-surface-container-highest">
+<img alt="Profielfoto verhuurder" class="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKccLOx1RN0UezjKVOWfob_MtIreOEyBhGxMJXT7McH62YUbjEOjPdWcV-G8schxxLO3qRMcuQCaPph3hQ-9Anp1fC8wA9YjvrOM7RJGazrkbP2w3ys5ChFlR6B-QezUhf5NI7q7VJDDIYeTTOJq_hmB0-1Ep_mRrZNh-JcRnAiblZTP0OG4VbAf-VpNGYkRwc3AF8yqlZZwN8DJm1lStnN4txrhCUIbuFclPu0cK7kHn64QvCh6LMU-3A2Hy8SUtujlvBwQQQsx4"/>
+</div>
+<span class="text-[10px] font-bold tracking-widest uppercase">SARAH D.</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold">5.0</span>
+</div>
+</div>
+</a>
+<!-- Card 3 -->
+<a class="group cursor-pointer block" href="{{DATA:SCREEN:SCREEN_59}}">
+<div class="relative aspect-[4/5] bg-surface-container overflow-hidden mb-6">
+<img alt="Monochrome foto van Cannondale Habit Carbon" class="w-full h-full object-cover grayscale transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWwoE_jMKGXlmSJBE4kgMpGRLozplwi14Wp5ykwlax9JesXGFozGwTYe7R7KTvgVz5DS3nuk0QfRNVfwR5txUwSZ7NRK7M3DXkTTzH7DWyh_-SbHzi8k_M9_W0wXxP-a-7Foo1x-c-wfjauXcmlZgQ0NdpckzsqDUUw6jaMSJhnwpj3F-X5uK9mf0TxdqdZ3En82qSjRZYIpW51ncaO9XYVwZTVVMAFAK5hYpWnnozoWxu20vzHQ2ywu5myiESfnwY99lFB9SWeH8"/>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-2xl font-black font-headline mb-1 tracking-tight group-hover:underline">Cannondale Habit Carbon</h3>
+<p class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-4">ROTTERDAM NOORD</p>
+</div>
+<div class="text-right">
+<p class="text-xl font-black font-headline tracking-tight">€48 / DAG</p>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-outline/10 pt-4 mt-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-surface-container-highest">
+<img alt="Profielfoto verhuurder" class="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBl2ETJBb7Li5CUY2Wq4IxCv7qQyGFHT2X9AKT5EsRmXqoRv3mgDklF43RkM8dTio1Yq--kzz_Kro1ngh6igwUnu7IPSsL-hG1T2oK-4H66QeN3lhzBI6wH3pYDYGrz34dlOd9eTRcqgiz1Wzxajjqv40lM_qlUvBNaOpvx_p0sHdb3C9UPvYLIfrvRo3-KpcVTEBZZ-UPy3DMLgUJJqBUoy8uMIsn7RL7pEPAQeM20Z6byJvWCZAZcnnmoNLUmW1c0Zzito4rBzEo"/>
+</div>
+<span class="text-[10px] font-bold tracking-widest uppercase">ELISA L.</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold">4.8</span>
+</div>
+</div>
+</a>
+<!-- Card 4 -->
+<a class="group cursor-pointer block" href="{{DATA:SCREEN:SCREEN_59}}">
+<div class="relative aspect-[4/5] bg-surface-container overflow-hidden mb-6">
+<img alt="Monochrome foto van Canyon Spectral 29" class="w-full h-full object-cover grayscale transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbS3CkHXbQMD2I58l-UWmcRJfE9kapP0T6ClTNCNbOuqR-6lp6wBQJT5ipgD1IFM7pxPVnLrO0ZXhFoBI358871FKerD7Rm_BpERlyRJqHNvjesH9KvD_UtQR9Df-WLMr9elvuOTlbyrMeBg6fynzc4rVZ-mpmDqq-jsLpeC0JOrnxLmDnNIZNbpb2nFOGa8BiUcCZD7g21sDF1hj9XY_o1qUsdahnPesfQzBcVwcbUWN4r1UMnosHhyegK9xiMUB4Dtx2-pPFJik"/>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-2xl font-black font-headline mb-1 tracking-tight group-hover:underline">Canyon Spectral 29</h3>
+<p class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-4">HAARLEM</p>
+</div>
+<div class="text-right">
+<p class="text-xl font-black font-headline tracking-tight">€40 / DAG</p>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-outline/10 pt-4 mt-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-surface-container-highest">
+<img alt="Profielfoto verhuurder" class="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_oIDlbIX_qI7GbNs41Szszk288wb8B09TiFK4THYgdvkObyG0UJmNXj2oLf8nNwKfz6m3MoXGZcP1oUfAjyjQy145k_TAJu--2-cQkEg075byJqyLPUkgcF4pj0J60gdcFpYtSrj0WlXMZatyZ3vgMxeQ02k8q0UGZZQ_NC-ML_VV0f3tOFRJ-l12OKhkB52CDBhD0BUYZhIKPrtdBgUQmg8Zh0M-8gpaVGgAt3I4XfpERktz0JbvOQjo7e3mU5SFA02dmRUZXHQ"/>
+</div>
+<span class="text-[10px] font-bold tracking-widest uppercase">BART K.</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold">4.7</span>
+</div>
+</div>
+</a>
+<!-- Card 5 -->
+<a class="group cursor-pointer block" href="{{DATA:SCREEN:SCREEN_59}}">
+<div class="relative aspect-[4/5] bg-surface-container overflow-hidden mb-6">
+<img alt="Monochrome foto van Santa Cruz Hightower" class="w-full h-full object-cover grayscale transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDy_AaMAQLAzWgfTYf4rSnPlg617inxKTWoYIkVwGe8FiVd5gskaqIJsCToNvhwuyiKSx8zQKpZn7G_Dej7UZ3ryNHxCcU8zlfMq1i60dbRb3bdRp4qUp32rSaCcOxwkTbf6eKC5I8dfxpKW20a7U7X9J_MfR80gpqcm0IwGzcIGyBn2AKYjGJAryakBIG3WvqcVG_a3g3anpmv6AIlJMy5TtY8HKNJxEucUtU0DiCfB-4cLs90HXStXlpQIpd8c28Qapi49khgfEE"/>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-2xl font-black font-headline mb-1 tracking-tight group-hover:underline">Santa Cruz Hightower</h3>
+<p class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-4">EINDHOVEN</p>
+</div>
+<div class="text-right">
+<p class="text-xl font-black font-headline tracking-tight">€65 / DAG</p>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-outline/10 pt-4 mt-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-surface-container-highest">
+<img alt="Profielfoto verhuurder" class="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANRO89KhGr2k0qwqKLNPCztKwEjGHT_XyNSMERMJWZzcaj9OEgel4Xa2xoRWXhSbWLHb8upEzkvYDfARAJ1TPbNrKs3_NDSpT-H3D52RsxaOQ-tZn6uLlGJJ-vSlKt0TRFPRNE_ZFYwFbOWIoJTWBora7t1BKygxi4JZvoVQWdwtMa3xO1yVjgjyUWIISdsxw4WpiNuTrGNgIysds2l_RBpnNKP25LdXX696w4ZXNkEWpq2YaIwfWP1-H1-Sfra1XLF6_TOHMcJR8"/>
+</div>
+<span class="text-[10px] font-bold tracking-widest uppercase">RICARDO S.</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold">5.0</span>
+</div>
+</div>
+</a>
+<!-- Card 6 -->
+<a class="group cursor-pointer block" href="{{DATA:SCREEN:SCREEN_59}}">
+<div class="relative aspect-[4/5] bg-surface-container overflow-hidden mb-6">
+<img alt="Monochrome foto van Giant Trance X" class="w-full h-full object-cover grayscale transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzP39h1-ciBoZ-IcbT8u3serkjtxyJdkpw0HDfSVQEokoxa7l1IrM5p61CU_C0hii9mpklA6haxRwiwzUpkN0kFKJ7einEyAd93hEsMucGLxDpDhg_amoxhUiKnPdhPM-5AoAn52LQ0mY7uIiSBRahi7EaJ5etAlCt8gVVcpjFqrCvNDHwQfJ9mJehcb-urLlafxTDOkVYXIxA84vexzvZDuSAJ_FTVoZubtQBczXCGQTfwAFWpfNeEKoaEiqcss8VhYJsYN5-84E"/>
+<div class="absolute top-4 right-4 bg-primary text-on-primary px-3 py-1 text-[10px] font-bold tracking-widest uppercase">NIEUW</div>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-2xl font-black font-headline mb-1 tracking-tight group-hover:underline">Giant Trance X</h3>
+<p class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-4">AMERSFOORT</p>
+</div>
+<div class="text-right">
+<p class="text-xl font-black font-headline tracking-tight">€38 / DAG</p>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-outline/10 pt-4 mt-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-surface-container-highest">
+<img alt="Profielfoto verhuurder" class="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYRNYsqtEJ7VSB2_7N4xNxNewTeIctSK13yECqajxbyD9QCKdeJdzwBbQTY7NA8dED4w6rew2D-i_kdHGCZZVC_UbPRepMut7qxZxVRtEDMw7LykuxLkO0zi88Og7XMc3H2LcSmZfyvPBhByaia4XnvgNO7PBRE2NEu5cVbSt_gQjLwo7Y9lqNpu_AQMnhcaZytoyxbTo0By3myVNU9BWZ-myaBzHEse8SEYZSEiGdNPZBq3SSvp8xTNdbqfXYepVOhyt1uw3z-rw"/>
+</div>
+<span class="text-[10px] font-bold tracking-widest uppercase">ANNE W.</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold">4.9</span>
+</div>
+</div>
+</a>
+</div>
+<!-- Pagination -->
+<div class="mt-20 flex justify-center gap-2">
+<button class="w-12 h-12 flex items-center justify-center bg-primary text-on-primary font-black font-headline">1</button>
+<button class="w-12 h-12 flex items-center justify-center hover:bg-surface-container-highest font-bold font-headline transition-colors">2</button>
+<button class="w-12 h-12 flex items-center justify-center hover:bg-surface-container-highest font-bold font-headline transition-colors">3</button>
+<button class="w-12 h-12 flex items-center justify-center hover:bg-surface-container-highest font-bold font-headline transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</main>
+</div>
+<!-- Footer -->
+<footer class="bg-primary full-width p-20 flex flex-col md:flex-row justify-between items-start w-full">
+<div class="mb-12 md:mb-0">
+<a class="text-on-primary font-black text-4xl tracking-tighter block mb-4" href="{{DATA:SCREEN:SCREEN_62}}">GEARHUUR</a>
+<p class="font-label text-on-primary/70 text-[10px] tracking-[0.2em] uppercase leading-relaxed max-w-xs">
+                © 2024 GEARHUUR. KINETISCH EDITORIAL SYSTEEM. DE NIEUWE STANDAARD IN EQUIPMENT RENTAL.
+            </p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-24">
+<div class="flex flex-col gap-4">
+<p class="font-label text-on-primary font-black text-[12px] tracking-widest uppercase mb-2">NAVIGATIE</p>
+<a class="font-label text-[10px] text-on-primary/70 hover:text-on-primary transition-opacity tracking-widest uppercase" href="#">PRIVACY</a>
+<a class="font-label text-[10px] text-on-primary/70 hover:text-on-primary transition-opacity tracking-widest uppercase" href="#">VOORWAARDEN</a>
+</div>
+<div class="flex flex-col gap-4">
+<p class="font-label text-on-primary font-black text-[12px] tracking-widest uppercase mb-2">SUPPORT</p>
+<a class="font-label text-[10px] text-on-primary/70 hover:text-on-primary transition-opacity tracking-widest uppercase" href="#">CONTACT</a>
+<a class="font-label text-[10px] text-on-primary/70 hover:text-on-primary transition-opacity tracking-widest uppercase" href="#">OVER ONS</a>
+</div>
+<div class="flex flex-col gap-4 col-span-2">
+<p class="font-label text-on-primary font-black text-[12px] tracking-widest uppercase mb-2">NEWSLETTER</p>
+<div class="flex">
+<input class="bg-transparent border-b border-on-primary/30 text-on-primary p-2 text-[10px] focus:outline-none focus:border-on-primary w-full" placeholder="E-MAILADRES" type="email"/>
+<button class="border-b border-on-primary/30 p-2 text-on-primary">
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

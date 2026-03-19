@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<html lang="nl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&amp;family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed": "#5e5e5e",
+              "inverse-primary": "#c6c6c6",
+              "background": "#f9f9f9",
+              "on-tertiary": "#e4e2e2",
+              "on-secondary-fixed-variant": "#3c3b3b",
+              "secondary-fixed": "#c8c6c5",
+              "outline": "#777777",
+              "on-error-container": "#410002",
+              "surface-tint": "#5e5e5e",
+              "error-container": "#ffdad6",
+              "tertiary-fixed-dim": "#464747",
+              "surface-variant": "#e2e2e2",
+              "on-secondary-container": "#1b1c1c",
+              "error": "#ba1a1a",
+              "tertiary": "#3b3b3b",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-highest": "#e2e2e2",
+              "secondary-fixed-dim": "#adabaa",
+              "on-tertiary-fixed-variant": "#e4e2e2",
+              "outline-variant": "#c6c6c6",
+              "on-primary-fixed-variant": "#e2e2e2",
+              "on-tertiary-container": "#ffffff",
+              "on-error": "#ffffff",
+              "surface-container-low": "#f3f3f4",
+              "on-surface-variant": "#474747",
+              "on-primary": "#e2e2e2",
+              "inverse-surface": "#2f3131",
+              "primary": "#000000",
+              "on-primary-container": "#ffffff",
+              "on-surface": "#1a1c1c",
+              "on-primary-fixed": "#ffffff",
+              "secondary": "#5f5e5e",
+              "primary-fixed-dim": "#474747",
+              "on-secondary": "#ffffff",
+              "surface-container-high": "#e8e8e8",
+              "tertiary-fixed": "#5e5e5e",
+              "surface-bright": "#f9f9f9",
+              "primary-container": "#3b3b3b",
+              "surface": "#f9f9f9",
+              "on-secondary-fixed": "#1b1c1c",
+              "on-background": "#1a1c1c",
+              "secondary-container": "#d6d4d3",
+              "on-tertiary-fixed": "#ffffff",
+              "surface-dim": "#dadada",
+              "surface-container": "#eeeeee",
+              "inverse-on-surface": "#f0f1f1",
+              "tertiary-container": "#757474"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #f9f9f9;
+            color: #1a1c1c;
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="font-body selection:bg-primary selection:text-on-primary">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-[#f9f9f9]/80 backdrop-blur-md flex justify-between items-center w-full px-6 h-16">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-black cursor-pointer bg-transparent border-none p-0 flex items-center justify-center" data-icon="menu" onclick="window.location.href='{{DATA:SCREEN:SCREEN_62}}'">menu</button>
+<h1 class="font-['Space_Grotesk'] text-2xl font-black tracking-tighter text-black">GEAR2GO</h1>
+</div>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-black cursor-pointer" data-icon="tune">tune</span>
+</div>
+</header>
+<main class="pt-16 pb-24 min-h-screen">
+<!-- Search Header Section -->
+<section class="px-6 py-8 bg-surface-container-low">
+<div class="flex flex-col gap-6">
+<div class="flex flex-col">
+<span class="font-label text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-2">ZOEKRESULTATEN</span>
+<h2 class="font-headline text-5xl font-black leading-none uppercase tracking-tighter">MOUNTAINBIKES</h2>
+</div>
+<!-- Search & Filter Bar -->
+<div class="flex gap-2">
+<div class="flex-grow flex items-center bg-surface-container-high px-4 h-14">
+<span class="material-symbols-outlined text-on-surface-variant mr-3" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 font-body text-sm uppercase font-bold tracking-tight w-full placeholder:text-on-surface-variant/50" type="text" value="Mountainbikes"/>
+</div>
+<button class="bg-primary text-on-primary px-6 h-14 flex items-center justify-center font-label font-bold text-xs tracking-widest uppercase">
+                        FILTER
+                    </button>
+</div>
+</div>
+</section>
+<!-- Results Feed -->
+<div class="px-6 space-y-12 mt-10">
+<!-- Result Card 1 -->
+<article class="group cursor-pointer" onclick="window.location.href='{{DATA:SCREEN:SCREEN_57}}'">
+<div class="relative overflow-hidden bg-surface-container mb-4 aspect-[4/5]">
+<img alt="Mountainbike Trek Fuel EX" class="w-full h-full object-cover grayscale contrast-125 transition-transform duration-300 group-hover:scale-105" data-alt="Black and white professional mountain bike Trek Fuel EX" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMM51xily7B5y94S7u5YqyKlbceFL8mmFDgAzvUOgwKkNAlVTWz8N6TxP1Ry10NlJOC__W0Y12FQGv492DCfLvVbfu_zR3SclgVirtLNYPMycNOcwrPgdqxBAPtVo5YDDWnq88QKK17vcfY-ux7A8PZ651E1pEX7JOlI0Cj4aZi_Q2zX6K9kSYUGWTni92nMuMv36xjZ_e-RgaYZkF05YC0oT2tOnVlG2RPwzgTyR8wF1S-pZovEDTnk3K2Ek08h5oX0kQlAKQVeM"/>
+<div class="absolute top-4 right-4 bg-primary text-on-primary px-3 py-1 font-label text-[10px] font-black tracking-widest uppercase">
+                        PREMIUM
+                    </div>
+</div>
+<div class="flex justify-between items-start border-b border-outline-variant/20 pb-4">
+<div class="space-y-1">
+<h3 class="font-headline text-2xl font-black uppercase leading-tight tracking-tight">TREK FUEL EX</h3>
+<div class="flex items-center gap-2 text-on-surface-variant font-label text-[10px] font-bold tracking-wider uppercase">
+<span class="material-symbols-outlined text-xs" data-icon="location_on">location_on</span>
+                            AMSTERDAM
+                        </div>
+</div>
+<div class="text-right">
+<div class="font-headline text-xl font-black">€45 <span class="text-xs font-bold text-on-surface-variant tracking-tighter">/ DAG</span></div>
+</div>
+</div>
+<div class="flex items-center justify-between mt-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-surface-container-highest flex items-center justify-center">
+<img alt="Lender Mark V." class="w-full h-full object-cover grayscale" data-alt="Portrait of a male lender Mark V." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9gZBeMWjphsoEFv6nQPM8emcswZdCHgky0OEJg4p15wctv9GC_tJfcf-CGkKOeXny8_5ZvrbnfyrLU0MoDyQG7AEC6lKWv_pO31k7sVjXku4p8jgaLhpiv4YDUybsKfyV_lOGFxZy56yvIKgRGcbSGyrfr7VSOMB9wfmRyXW6vTWOq-f4iV7Ew_VlPC1fxDKFNUuApdj75BPaxXWSd-uKYO6LXpRGNH0WcL3r329UA2jNdcHje5xKZY8IAfGn6cw9GAguyAm6c2U"/>
+</div>
+<div>
+<p class="font-label text-[10px] font-bold tracking-tighter">MARK V.</p>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label text-[10px] font-bold">4.9</span>
+</div>
+</div>
+</div>
+<button class="font-label text-[10px] font-black underline tracking-widest uppercase">DETAILS</button>
+</div>
+</article>
+<!-- Result Card 2 -->
+<article class="group cursor-pointer" onclick="window.location.href='{{DATA:SCREEN:SCREEN_57}}'">
+<div class="relative overflow-hidden bg-surface-container mb-4 aspect-[4/5]">
+<img alt="Specialized Stumpjumper" class="w-full h-full object-cover grayscale contrast-125 transition-transform duration-300 group-hover:scale-105" data-alt="B&amp;W side view of Specialized Stumpjumper mountain bike" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoYNySlqOymQz3CnQafbrGaIUTYM8NP1eDgvtwmOBpsD_D5NXnm4W8J3XNy7hzhIiGfG4xKNphOvP2jDz0EPklRRwTWxXauEWvNK1bNm0fG39YeEYRwp27Zj_uwRGfJ2NeQfGQHE5GNPrL3W_jm2qUZaqTKJUlSuUxFIwj75TIgRC5F2pvrPl35x7emETo8LP23a5Xwm3a8492wJR2IRuhDABYUI4kxCYh-bdicC6B1L5fombV6-6QvSo5MWaGZm4wsikzFv8qSDo"/>
+</div>
+<div class="flex justify-between items-start border-b border-outline-variant/20 pb-4">
+<div class="space-y-1">
+<h3 class="font-headline text-2xl font-black uppercase leading-tight tracking-tight">SPECIALIZED STUMPJUMPER</h3>
+<div class="flex items-center gap-2 text-on-surface-variant font-label text-[10px] font-bold tracking-wider uppercase">
+<span class="material-symbols-outlined text-xs" data-icon="location_on">location_on</span>
+                            UTRECHT
+                        </div>
+</div>
+<div class="text-right">
+<div class="font-headline text-xl font-black">€52 <span class="text-xs font-bold text-on-surface-variant tracking-tighter">/ DAG</span></div>
+</div>
+</div>
+<div class="flex items-center justify-between mt-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-surface-container-highest flex items-center justify-center">
+<img alt="Lender Sarah D." class="w-full h-full object-cover grayscale" data-alt="Portrait of lender Sarah D." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIBx5_d7R0BEA7SodYgye1nRZD_dCJTIq1y_qwU3Xvx9rmcNg0sZIF1w-B1EnOdEr2ZgWdi1jjt1zDCr4hHyOnBoCS2lbgALwywiIW2DTpZ4-hx3IBixxRjuZmLpIQBiTuOIuO-NIEuNVUjUjxwYgyEUtBAKkEuXsKvqPAxLkMQmL2bnvbiItXhVOIaSQyx15NdB8CS_eZpCNI_F37bwyXfgO1tm03c6V7tBIcYjxlVsv7E3fR8ZtNs_6FApUaZe69TORV-Id_krg"/>
+</div>
+<div>
+<p class="font-label text-[10px] font-bold tracking-tighter">SARAH D.</p>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label text-[10px] font-bold">5.0</span>
+</div>
+</div>
+</div>
+<button class="font-label text-[10px] font-black underline tracking-widest uppercase">DETAILS</button>
+</div>
+</article>
+<!-- Result Card 3 -->
+<article class="group cursor-pointer" onclick="window.location.href='{{DATA:SCREEN:SCREEN_57}}'">
+<div class="relative overflow-hidden bg-surface-container-low mb-4 aspect-[4/5] flex items-center justify-center">
+<div class="absolute inset-0 bg-surface-container-highest">
+<img alt="Canyon Spectral" class="w-full h-full object-cover grayscale opacity-80 mix-blend-multiply" data-alt="Monochrome image of Canyon Spectral mountain bike on a trail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXG1Wlzf_iDTvoZXo-EeNtqBrMm2fgrmFkaRSCnr6E5d-hjZL9W6tAFFbDAL5sX07-8lM6LBnJJi4GSDayU_Cwxi22ka1iX-cGr17cDXBCoP-ETrRiC31B-oItM8BXW4u5UI4BfNWCOEy0-mfceb_nCRy3XmCVXfJ5fQHeXCRYWs2Sd__RAlmFIqfzfNPKcY0RRutTT5mEJQ3eVdLgUwcu5fQtJ2nVe2X-bpS4IZOxao5BvS6QhrQ6o01jcCCCOvxcFxBgXQaFnwM"/>
+</div>
+<div class="z-10 bg-white/90 p-4 border-2 border-black">
+<span class="font-headline font-black text-xs uppercase tracking-tighter italic">LAATSTE KANS</span>
+</div>
+</div>
+<div class="flex justify-between items-start border-b border-outline-variant/20 pb-4">
+<div class="space-y-1">
+<h3 class="font-headline text-2xl font-black uppercase leading-tight tracking-tight">CANYON SPECTRAL</h3>
+<div class="flex items-center gap-2 text-on-surface-variant font-label text-[10px] font-bold tracking-wider uppercase">
+<span class="material-symbols-outlined text-xs" data-icon="location_on">location_on</span>
+                            ROTTERDAM
+                        </div>
+</div>
+<div class="text-right">
+<div class="font-headline text-xl font-black">€39 <span class="text-xs font-bold text-on-surface-variant tracking-tighter">/ DAG</span></div>
+</div>
+</div>
+<div class="flex items-center justify-between mt-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-surface-container-highest flex items-center justify-center">
+<img alt="Lender Erik J." class="w-full h-full object-cover grayscale" data-alt="Portrait of lender Erik J." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBumQh3IK-SF_ycztRLnv8pbWcP0RI_buJCps73dsxcCuP_-eyshjq5Q5rr537FBRo1lrK57M-Xyt24C3lwYyxOK5W14fjBwwhRis23oYVXjChlwNerIYnsVRa9-BwIEEJ8R-LQ9tmzgWjgFStxC4nfXejEGnOmrsU8gstKS69D6q01J9eOB-YLNtphK6sGO7wLguOUStfV8P_ojSHpvWbM_2-T7zQso8UEwOhyMafBpiZV3g52D3L_dqu-qun-OzUailSDoFzzIt4"/>
+</div>
+<div>
+<p class="font-label text-[10px] font-bold tracking-tighter">ERIK J.</p>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label text-[10px] font-bold">4.7</span>
+</div>
+</div>
+</div>
+<button class="font-label text-[10px] font-black underline tracking-widest uppercase">DETAILS</button>
+</div>
+</article>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 bg-[#ffffff] flex justify-around items-center w-full h-20">
+<a class="flex flex-col items-center justify-center text-[#474747] px-2 py-1 hover:bg-[#e2e2e2] flex-1" href="{{DATA:SCREEN:SCREEN_30}}">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-['Inter'] text-[10px] font-bold uppercase tracking-[0.05em]">EXPLORE</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-black text-white px-2 py-1 flex-1" href="{{DATA:SCREEN:SCREEN_14}}">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+<span class="font-['Inter'] text-[10px] font-bold uppercase tracking-[0.05em]">RENTALS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#474747] px-2 py-1 hover:bg-[#e2e2e2] flex-1" href="{{DATA:SCREEN:SCREEN_53}}">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-['Inter'] text-[10px] font-bold uppercase tracking-[0.05em]">INBOX</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#474747] px-2 py-1 hover:bg-[#e2e2e2] flex-1" href="{{DATA:SCREEN:SCREEN_46}}">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Inter'] text-[10px] font-bold uppercase tracking-[0.05em]">PROFILE</span>
+</a>
+</nav>
+</body></html>

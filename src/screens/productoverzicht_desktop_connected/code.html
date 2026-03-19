@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+
+<html lang="nl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-fixed-dim": "#464747",
+              "surface-dim": "#dadada",
+              "on-tertiary-fixed": "#ffffff",
+              "surface-container-low": "#f3f3f4",
+              "background": "#f9f9f9",
+              "surface-variant": "#e2e2e2",
+              "inverse-on-surface": "#f0f1f1",
+              "primary-fixed": "#5e5e5e",
+              "error": "#ba1a1a",
+              "surface": "#f9f9f9",
+              "on-secondary-fixed-variant": "#3c3b3b",
+              "secondary-fixed": "#c8c6c5",
+              "surface-container-highest": "#e2e2e2",
+              "on-tertiary-fixed-variant": "#e4e2e2",
+              "secondary": "#5f5e5e",
+              "primary-fixed-dim": "#474747",
+              "tertiary-container": "#757474",
+              "on-primary-fixed": "#ffffff",
+              "on-surface-variant": "#474747",
+              "tertiary": "#3b3b3b",
+              "outline-variant": "#c6c6c6",
+              "on-primary": "#e2e2e2",
+              "on-error": "#ffffff",
+              "on-error-container": "#410002",
+              "on-surface": "#1a1c1c",
+              "on-secondary-fixed": "#1b1c1c",
+              "error-container": "#ffdad6",
+              "surface-tint": "#5e5e5e",
+              "inverse-primary": "#c6c6c6",
+              "secondary-fixed-dim": "#adabaa",
+              "on-primary-fixed-variant": "#e2e2e2",
+              "on-secondary-container": "#1b1c1c",
+              "surface-container": "#eeeeee",
+              "primary": "#000000",
+              "on-background": "#1a1c1c",
+              "on-tertiary-container": "#ffffff",
+              "primary-container": "#3b3b3b",
+              "outline": "#777777",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary": "#e4e2e2",
+              "inverse-surface": "#2f3131",
+              "surface-container-high": "#e8e8e8",
+              "secondary-container": "#d6d4d3",
+              "surface-bright": "#f9f9f9",
+              "tertiary-fixed": "#5e5e5e",
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9f9f9;
+        }
+        h1, h2, h3, .font-headline {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .kinetic-border {
+            border: 1px solid rgba(198, 198, 198, 0.15);
+        }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- TopNavBar Shell -->
+<header class="bg-surface/80 backdrop-blur-md fixed top-0 z-50 flex justify-between items-center w-full px-8 h-20 max-w-full">
+<div class="flex items-center gap-8">
+<a class="text-2xl font-black tracking-tighter text-primary" href="{{DATA:SCREEN:SCREEN_62}}">GEAR_SWAP</a>
+<div class="hidden md:flex gap-6">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-headline text-sm uppercase tracking-wider" href="#">Ontdekken</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-headline text-sm uppercase tracking-wider" href="#">Huren</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-headline text-sm uppercase tracking-wider" href="#">Verhuren</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-headline text-sm uppercase tracking-wider" href="#">Over ons</a>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined cursor-pointer hover:bg-surface-container-highest p-2 transition-all">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:bg-surface-container-highest p-2 transition-all">favorite</span>
+<a class="material-symbols-outlined cursor-pointer hover:bg-surface-container-highest p-2 transition-all text-on-surface no-underline" href="{{DATA:SCREEN:SCREEN_40}}">chat_bubble</a>
+</div>
+<div class="w-10 h-10 bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Gebruikersprofiel avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB57uoXe_WPiEc5LAxcfTVJF1RVbOuHjaNA2067slfZyXerlN039OOpi_GUq56UczjQZ4IlS5ezAViNR0QY9yJx71xDKcdXqMD7pPaF_lI3p_JmCAzzfPXMxgfvoKPMPJH6b6yEvuS6Z7KcCWO_jLS4xv-QmKcFMOjl75S5olpbjOw3WvrY6ZN49rkUbFaQ8ZFb3a4pv4M0NbGXy76SziW_yoos--Ub8q7YoCXO5KuOt5Xvd7Nck3gilQ46gU3Xu-smZTkapsoE5CQ"/>
+</div>
+</div>
+</header>
+<main class="pt-32 pb-20 px-8 max-w-[1440px] mx-auto flex flex-col md:flex-row gap-16">
+<!-- Left Column: Product Visual -->
+<div class="w-full md:w-7/12">
+<div class="bg-surface-container-low aspect-[4/5] relative overflow-hidden group">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Zwarte Specialized S-Works Epic mountainbike in studio" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_XVtLWXc37BdRGa8uNt8kbSyhHhRscvsea_3nRLaVaerqgYzg_YXtlDUQGmm4OMOXjmVpE8CaOw8oRJskwaIvwL3y0LqUFZg1kaqyTtaJU-JxTp0ZD6vUtMcdVq77MJ6g3NAwo-9LaruTEojehiakaTwVjxlp0pRSbHfq2L6F3o0rcFYXuo3CczbOS_j0ZLpNYzw2pmUihUNWcg_mkJNpZ1fN_tKxkP6f5s3aEIfcr13oWDdfv3Wszyeg5HcYOb06Fk_8FXcdF5U"/>
+<div class="absolute top-6 left-6 bg-primary text-on-primary px-4 py-2 font-headline text-xs uppercase tracking-widest">
+                    Top Segment
+                </div>
+</div>
+<div class="mt-8 grid grid-cols-3 gap-4">
+<div class="bg-surface-container-low aspect-square">
+<img class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all" data-alt="Close up van mountainbike carbon frame" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXKKYTQWJxOWpluAWPTwE69hXUCK6iGG3rnp-KzCJ4JCuOreMtwC1tVxBOf2WjgJh7e0Q0MusRo8jfv_-LxcCanLVc8pdPftDu4hSRoL6bSe9YQJHlgokFk9VywPsDNMn5KCIyMuh6LzmTC2CftraSoPAFw4s8kWZzH4wDXfaeo7xHvWZ-muFj17doaAGfsbt-qcOCLGIa0shG_LU_WPOPY7UYtMWwTGxynpRJDeqKktE171_3x6m___cIvllRx1NCCvNZRGrUEfs"/>
+</div>
+<div class="bg-surface-container-low aspect-square">
+<img class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all" data-alt="Detail van vering mountainbike" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4OqRqS0bsUM2nVMDmQdS3mPVHp5eV5b9p09SRHnxah8KM10HuTH3A6C8ZBsplxi72XJqhlvwwYg7Vb7vqGS6FlYnK7Vw3IvLYaocc0Kg1FULnlOV2BzeKA8wDiI4i0VZPtd6men6lRFyKxniREICxPnAGyScMu5n9oB1FRF3PLhmor4OKGTQqzgHUnVFGZhxMpdjqf58cHwOdYtSVFEw3K7Q7DN8iQHrWUVIS6bwrtMKw4j6Ue3ExI4a4LED2PZs66fLXbiAzESo"/>
+</div>
+<div class="bg-surface-container-low aspect-square">
+<img class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all" data-alt="Mountainbike wielen en remmen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyLWB3qv826oW-w30CwAHTLJiFMqefdawY_n2-3mBfEaoy0WCEv6xtT52DWsk4-drmJZIDImfJu6ADdI3y7ywroGkJVviDkSJg9ZJ5iFe9rmQ2eCXQjUINYbwtrOrFZnY7sdYcTupAGXHxycPkJH4Dzfga9MJI9loaRse2059JZAxJsYYs6cPvKLQJeI8c_NhSU-K-Mncj31r4PVWrKhnxffCzw_AHJVEhEM2rdWsfcBoO3WvhJJDiGrngyNNcJ_gqMWioUvkIfWY"/>
+</div>
+</div>
+</div>
+<!-- Right Column: Product Info -->
+<div class="w-full md:w-5/12 flex flex-col">
+<div class="mb-2">
+<span class="text-xs uppercase tracking-[0.2em] font-medium text-on-surface-variant font-label">Mountainbike / Performance</span>
+</div>
+<h1 class="text-6xl font-black tracking-tight leading-none mb-6 font-headline uppercase">Specialized S-Works Epic</h1>
+<div class="flex items-baseline gap-2 mb-10">
+<span class="text-4xl font-bold font-headline">€55</span>
+<span class="text-on-surface-variant font-label uppercase tracking-widest text-sm">/ per dag</span>
+</div>
+<div class="space-y-12">
+<!-- Technical Specs Bento -->
+<section>
+<h3 class="text-sm font-black uppercase tracking-widest mb-6 border-b border-outline-variant/20 pb-2">Technische Specificaties</h3>
+<div class="grid grid-cols-2 gap-px bg-outline-variant/20 border border-outline-variant/20">
+<div class="bg-surface p-6">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-1 font-label">Frame</p>
+<p class="text-xl font-bold font-headline uppercase">Carbon</p>
+</div>
+<div class="bg-surface p-6">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-1 font-label">Maat</p>
+<p class="text-xl font-bold font-headline uppercase">L</p>
+</div>
+<div class="bg-surface p-6">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-1 font-label">Gewicht</p>
+<p class="text-xl font-bold font-headline uppercase">10.2 kg</p>
+</div>
+<div class="bg-surface p-6">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-1 font-label">Wielmaat</p>
+<p class="text-xl font-bold font-headline uppercase">29 inch</p>
+</div>
+</div>
+</section>
+<!-- Verhuurder Sectie -->
+<section class="bg-surface-container-low p-8">
+<h3 class="text-xs font-black uppercase tracking-widest mb-6">Verhuurder</h3>
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Mark J. portretfoto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCZqkkYsLckEeku_zxuYz6hMejOlpgVLwLaYSdCvF569uL81urSRk2i5FdW6KPUb8Y5Pm3pgDSn1j1SNl1AjB-Ge8bGMBm7ExzlDXo44FbF58cJIrHWsgc9tD6ehpN4lVzMJcJArlxthpuEt-V-jMQRVz1UzDkL2WaN3BBEFurZTcrwnbBPq2sqJv3G-O8Jw4W7bgWMpVF3NjkVdyp0H_UdkUrb499tg4a9TwVFuX21YHY-TZmTPGE3xGtghOtGbm_Rc3vDUH4qu8"/>
+</div>
+<div class="flex flex-col">
+<span class="text-xl font-bold font-headline">Mark J.</span>
+<div class="flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-sm font-bold">4.9</span>
+<span class="text-xs text-on-surface-variant">(128 reviews)</span>
+</div>
+</div>
+</div>
+<div class="mt-6 flex flex-col gap-3">
+<a class="w-full bg-primary text-on-primary py-4 px-6 font-headline font-bold uppercase tracking-widest hover:bg-surface-dim hover:text-primary transition-all active:scale-95 duration-75 text-center no-underline" href="{{DATA:SCREEN:SCREEN_40}}">
+                            Chat met Verhuurder
+                        </a>
+</div>
+</section>
+<!-- Booking Actions -->
+<section class="mt-auto">
+<a class="block w-full bg-surface-container-lowest border border-outline-variant/30 py-6 px-6 font-headline font-black text-2xl uppercase tracking-tighter hover:bg-primary hover:text-on-primary transition-all active:scale-95 duration-75 text-center no-underline" href="{{DATA:SCREEN:SCREEN_61}}">
+                        Direct Huren
+                    </a>
+<p class="text-[10px] text-center mt-4 text-on-surface-variant uppercase tracking-widest font-label">
+                        Inclusief basisverzekering &amp; Servicekosten
+                    </p>
+</section>
+</div>
+</div>
+</main>
+<!-- Footer Shell -->
+<footer class="bg-primary text-on-primary mt-20">
+<div class="flex justify-between items-center px-8 py-12 w-full">
+<div class="flex flex-col gap-2">
+<a class="text-on-primary font-black text-xl tracking-tighter no-underline" href="{{DATA:SCREEN:SCREEN_62}}">GEAR_SWAP</a>
+<p class="text-[10px] text-on-primary/70 uppercase tracking-widest font-label">© 2024 GEAR_SWAP. KINETIC EDITORIAL SYSTEM.</p>
+</div>
+<div class="flex gap-8 items-center">
+<a class="text-on-primary/70 hover:text-on-primary transition-opacity text-[10px] uppercase tracking-widest font-label" href="#">Privacybeleid</a>
+<a class="text-on-primary/70 hover:text-on-primary transition-opacity text-[10px] uppercase tracking-widest font-label" href="#">Algemene Voorwaarden</a>
+<a class="text-on-primary/70 hover:text-on-primary transition-opacity text-[10px] uppercase tracking-widest font-label" href="#">Support</a>
+<a class="text-on-primary/70 hover:text-on-primary transition-opacity text-[10px] uppercase tracking-widest font-label" href="#">Duurzaamheid</a>
+</div>
+</div>
+</footer>
+</body></html>

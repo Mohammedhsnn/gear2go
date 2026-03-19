@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ItemStatus {
+  DRAFT
+  PUBLISHED
+  PAUSED
+  ARCHIVED
+}
+
+enum NotificationType {
+  SYSTEM
+  ITEM
+  REVIEW
+  MESSAGE
+  SECURITY
+}
+
+enum VerificationType {
+  EMAIL
+  PASSWORD_RESET
+  KYC
+}
+
+model User {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  email           String   @unique
+  emailVerifiedAt DateTime?
+  passwordHash    String
+
+  displayName     String?
+  avatarUrl       String?
+
+  sessions        Session[]
+  verification    VerificationToken[]
+  privacy         PrivacySettings?
+
+  items           Item[]   @relation("OwnerItems")
+  reviewsAuthored Review[] @relation("ReviewsAuthored")
+  reviewsReceived Review[] @relation("ReviewsReceived")
+
+  notifications   Notification[]
+}
+
+model Session {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  lastSeenAt  DateTime @default(now())
+  expiresAt   DateTime
+
+  tokenHash   String   @unique
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model VerificationToken {
+  id          String           @id @default(cuid())
+  createdAt   DateTime         @default(now())
+  expiresAt   DateTime
+  consumedAt  DateTime?
+
+  type        VerificationType
+  tokenHash   String           @unique
+
+  userId      String
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+  @@index([expiresAt])
+}
+
+model PrivacySettings {
+  id                   String   @id @default(cuid())
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  marketingEmails      Boolean  @default(false)
+  productEmails        Boolean  @default(true)
+  pushNotifications    Boolean  @default(true)
+  profilePublic        Boolean  @default(true)
+
+  userId               String   @unique
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  slug        String   @unique
+  label       String
+  sortOrder   Int      @default(0)
+
+  items       Item[]
+}
+
+model Item {
+  id               String     @id @default(cuid())
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  status           ItemStatus @default(DRAFT)
+
+  title            String
+  subtitle         String?
+  description      String?
+
+  location         String?
+  pricePerDayCents Int
+  depositCents     Int        @default(0)
+
+  imageUrl         String?
+
+  categoryId       String?
+  category         Category?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  ownerId          String
+  owner            User       @relation("OwnerItems", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  reviews          Review[]
+
+  @@index([ownerId])
+  @@index([categoryId])
+  @@index([status])
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  rating      Int
+  text        String?
+
+  itemId      String
+  item        Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  authorId    String
+  author      User     @relation("ReviewsAuthored", fields: [authorId], references: [id], onDelete: Cascade)
+
+  subjectUserId String
+  subjectUser   User   @relation("ReviewsReceived", fields: [subjectUserId], references: [id], onDelete: Cascade)
+
+  @@index([itemId])
+  @@index([authorId])
+  @@index([subjectUserId])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  createdAt DateTime         @default(now())
+  readAt    DateTime?
+
+  type      NotificationType
+  title     String
+  body      String?
+  data      Json?
+
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt])
+  @@index([createdAt])
+}
