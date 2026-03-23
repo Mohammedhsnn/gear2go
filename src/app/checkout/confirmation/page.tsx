@@ -8,7 +8,13 @@ const ORDER_STORAGE_KEY = "gear2go_last_order_v1";
 
 type Order = {
   placedAt: string;
-  customer: { fullName: string; address: string; postalCode: string; city: string };
+  customer: {
+    fullName: string;
+    email: string;
+    address: string;
+    postalCode: string;
+    city: string;
+  };
   totals: {
     rentalDays: number;
     subtotalCents: number;
@@ -17,12 +23,20 @@ type Order = {
     totalCents: number;
   };
   lineCount: number;
+  bookingStatuses?: Array<{ id: string; status: string }>;
   chatContext?: {
     productId: string;
     productTitle: string;
     ownerName: string;
   } | null;
 };
+
+function toBookingLabel(status: string): string {
+  if (status === "REQUESTED") return "Aangevraagd";
+  if (status === "CONFIRMED") return "Bevestigd";
+  if (status === "DECLINED") return "Geweigerd";
+  return status;
+}
 
 function loadOrder(): Order | null {
   if (typeof window === "undefined") return null;
@@ -102,6 +116,20 @@ export default function ConfirmationPage() {
                   </div>
                 </div>
               </div>
+              {order?.bookingStatuses?.length ? (
+                <div className="mt-4 border-t border-outline-variant/20 pt-4">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">
+                    Boekingstatus
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {order.bookingStatuses.map((x) => (
+                      <span key={x.id} className="bg-surface-container-high px-3 py-2 text-[10px] font-bold uppercase tracking-widest">
+                        {toBookingLabel(x.status)}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
         </section>
@@ -166,7 +194,7 @@ export default function ConfirmationPage() {
           className="w-full bg-primary text-on-primary font-headline font-bold uppercase py-5 text-sm tracking-widest hover:bg-surface-dim hover:text-primary active:scale-[0.98] transition-all text-center"
           href={
             order?.chatContext
-              ? `/berichten?owner=${encodeURIComponent(order.chatContext.ownerName)}&product=${encodeURIComponent(order.chatContext.productTitle)}`
+              ? `/berichten?owner=${encodeURIComponent(order.chatContext.ownerName)}&product=${encodeURIComponent(order.chatContext.productTitle)}&itemId=${encodeURIComponent(order.chatContext.productId)}`
               : "/berichten"
           }
         >

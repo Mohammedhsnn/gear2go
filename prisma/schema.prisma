@@ -4,7 +4,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 enum ItemStatus {
@@ -28,6 +29,12 @@ enum VerificationType {
   KYC
 }
 
+enum BookingStatus {
+  REQUESTED
+  CONFIRMED
+  DECLINED
+}
+
 model User {
   id              String   @id @default(cuid())
   createdAt       DateTime @default(now())
@@ -45,6 +52,8 @@ model User {
   privacy         PrivacySettings?
 
   items           Item[]   @relation("OwnerItems")
+  bookingsRented  Booking[] @relation("RenterBookings")
+  bookingsOwned   Booking[] @relation("OwnerBookings")
   reviewsAuthored Review[] @relation("ReviewsAuthored")
   reviewsReceived Review[] @relation("ReviewsReceived")
 
@@ -131,11 +140,38 @@ model Item {
   ownerId          String
   owner            User       @relation("OwnerItems", fields: [ownerId], references: [id], onDelete: Cascade)
 
+  bookings         Booking[]
   reviews          Review[]
 
   @@index([ownerId])
   @@index([categoryId])
   @@index([status])
+}
+
+model Booking {
+  id               String       @id @default(cuid())
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  status           BookingStatus @default(REQUESTED)
+
+  startDate        DateTime
+  endDate          DateTime
+  totalCents       Int
+
+  itemId           String
+  item             Item         @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  renterId         String
+  renter           User         @relation("RenterBookings", fields: [renterId], references: [id], onDelete: Cascade)
+
+  ownerId          String
+  owner            User         @relation("OwnerBookings", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([itemId])
+  @@index([renterId, status])
+  @@index([ownerId, status])
+  @@index([startDate, endDate])
 }
 
 model Review {

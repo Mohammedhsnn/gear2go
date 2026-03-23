@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { calculateAddOnsCents, type AddOnId, rentalAddOns } from "@/data/addOns";
 import { clampToPositiveInt, daysBetweenInclusive, getProductById } from "@/data/catalog";
 
 export type CartLine = {
@@ -12,6 +13,7 @@ export type CartLine = {
 
 export type CartState = {
   lines: CartLine[];
+  addOns: AddOnId[];
 };
 
 const DEFAULT_START = "2026-05-12";
@@ -24,14 +26,22 @@ function safeParse(json: string | null): CartState | null {
     const parsed = JSON.parse(json) as CartState;
     if (!parsed || typeof parsed !== "object") return null;
     if (!Array.isArray(parsed.lines)) return null;
-    return parsed;
+    const knownIds = new Set(rentalAddOns.map((x) => x.id));
+    const parsedAddOns = Array.isArray((parsed as { addOns?: unknown[] }).addOns)
+      ? ((parsed as { addOns?: unknown[] }).addOns as unknown[])
+          .filter((x): x is AddOnId => typeof x === "string" && knownIds.has(x as AddOnId))
+      : [];
+    return {
+      lines: parsed.lines,
+      addOns: Array.from(new Set(parsedAddOns)),
+    };
   } catch {
     return null;
   }
 }
 
 function initialState(): CartState {
-  return { lines: [] };
+  return { lines: [], addOns: [] };
 }
 
 function loadInitialState(): CartState {
@@ -45,6 +55,7 @@ type CartTotals = {
   subtotalCents: number;
   depositCents: number;
   shippingCents: number;
+  addOnsCents: number;
   totalCents: number;
 };
 
@@ -55,6 +66,7 @@ type CartContextValue = {
   removeLine: (productId: string) => void;
   clear: () => void;
   setDatesForAll: (startDateISO: string, endDateISO: string) => void;
+  toggleAddOn: (id: AddOnId) => void;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -80,14 +92,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       depositCents += product.depositCents * qty;
     }
 
-    const totalCents = subtotalCents + depositCents + shippingCents;
     const rentalDays =
       state.lines.length > 0
         ? daysBetweenInclusive(state.lines[0]!.startDateISO, state.lines[0]!.endDateISO)
         : 1;
+    const addOnsCents = calculateAddOnsCents(state.addOns, rentalDays);
+    const totalCents = subtotalCents + depositCents + shippingCents + addOnsCents;
 
-    return { rentalDays, subtotalCents, depositCents, shippingCents, totalCents };
-  }, [state.lines]);
+    return { rentalDays, subtotalCents, depositCents, shippingCents, addOnsCents, totalCents };
+  }, [state.addOns, state.lines]);
 
   const addOrUpdateLine = (line: CartLine) => {
     setState((prev) => {
@@ -100,23 +113,36 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       };
 
       const existingIdx = prev.lines.findIndex((l) => l.productId === line.productId);
-      if (existingIdx === -1) return { lines: [...prev.lines, nextLine] };
+      if (existingIdx === -1) return { ...prev, lines: [...prev.lines, nextLine] };
 
       const next = [...prev.lines];
       next[existingIdx] = nextLine;
-      return { lines: next };
+      return { ...prev, lines: next };
     });
   };
 
   const removeLine = (productId: string) => {
-    setState((prev) => ({ lines: prev.lines.filter((l) => l.productId !== productId) }));
+    setState((prev) => ({
+      ...prev,
+      lines: prev.lines.filter((l) => l.productId !== productId),
+    }));
   };
 
-  const clear = () => setState({ lines: [] });
+  const clear = () => setState({ lines: [], addOns: [] });
 
   const setDatesForAll = (startDateISO: string, endDateISO: string) => {
     setState((prev) => ({
+      ...prev,
       lines: prev.lines.map((l) => ({ ...l, startDateISO, endDateISO })),
+    }));
+  };
+
+  const toggleAddOn = (id: AddOnId) => {
+    setState((prev) => ({
+      ...prev,
+      addOns: prev.addOns.includes(id)
+        ? prev.addOns.filter((x) => x !== id)
+        : [...prev.addOns, id],
     }));
   };
 
@@ -127,6 +153,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     removeLine,
     clear,
     setDatesForAll,
+    toggleAddOn,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

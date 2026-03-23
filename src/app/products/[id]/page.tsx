@@ -12,6 +12,8 @@ export default async function ProductDetailPage({
   const { id } = await params;
   const product = getProductById(id);
   if (!product) notFound();
+  const ownerName = "Mark J.";
+  const chatHref = `/berichten?owner=${encodeURIComponent(ownerName)}&product=${encodeURIComponent(product.title)}&itemId=${encodeURIComponent(product.id)}`;
 
   return (
     <div className="min-h-dvh pb-32 md:pb-0">
@@ -195,7 +197,7 @@ export default async function ProductDetailPage({
                 <div className="mt-6 flex flex-col gap-3">
                   <Link
                     className="w-full bg-primary text-on-primary py-4 px-6 font-headline font-bold uppercase tracking-widest hover:bg-surface-dim hover:text-primary transition-all active:scale-95 duration-75 text-center"
-                    href="/ontdekken"
+                    href={chatHref}
                   >
                     Chat met Verhuurder
                   </Link>
@@ -221,7 +223,7 @@ export default async function ProductDetailPage({
         <div className="grid grid-cols-2 gap-3">
           <Link
             className="flex items-center justify-center gap-2 border border-outline-variant/40 bg-transparent text-primary py-4 font-label text-xs tracking-widest uppercase hover:bg-surface-dim transition-colors duration-100"
-            href="/ontdekken"
+            href={chatHref}
           >
             <span className="material-symbols-outlined text-sm">chat_bubble</span>
             BERICHT

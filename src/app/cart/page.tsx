@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
+import { rentalAddOns } from "@/data/addOns";
 import { BottomNav } from "@/components/BottomNav";
 import { formatEUR, getProductById } from "@/data/catalog";
 import { useCart } from "@/state/cart";
 
 export default function CartPage() {
-  const { state, totals, removeLine, setDatesForAll } = useCart();
+  const { state, totals, removeLine, setDatesForAll, toggleAddOn } = useCart();
 
   const lines = useMemo(
     () =>
@@ -208,6 +209,12 @@ export default function CartPage() {
                         </span>
                         <span className="font-bold">{formatEUR(totals.depositCents)}</span>
                       </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-on-surface-variant uppercase tracking-wider">
+                          Extra opties
+                        </span>
+                        <span className="font-bold">{formatEUR(totals.addOnsCents)}</span>
+                      </div>
                       <div className="pt-6 border-t border-outline-variant flex justify-between items-end">
                         <div>
                           <span className="text-[10px] uppercase font-black tracking-widest block text-on-surface-variant">
@@ -249,27 +256,43 @@ export default function CartPage() {
                   Vergeet deze niet
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {[
-                    ["Huurverzekering", "Dekking voor schade en diefstal.", "EUR 4,99 / dag"],
-                    ["MTB Helm", "Giro Source MIPS - Veiligheid eerst.", "EUR 15,00 / trip"],
-                    ["Reinigingsset", "Lever je gear weer blinkend in.", "EUR 7,50 / trip"],
-                  ].map(([title, text, price]) => (
+                  {rentalAddOns.map((addOn) => {
+                    const selected = state.addOns.includes(addOn.id);
+                    const price =
+                      addOn.billing === "PER_DAY"
+                        ? `${formatEUR(addOn.priceCents)} / dag`
+                        : `${formatEUR(addOn.priceCents)} / trip`;
+
+                    return (
                     <div
-                      key={title}
-                      className="bg-surface-container-low p-6 flex flex-col justify-between h-48 group hover:bg-surface-container-highest transition-colors cursor-pointer"
+                      key={addOn.id}
+                      className={`p-6 flex flex-col justify-between h-48 group transition-colors cursor-pointer ${
+                        selected
+                          ? "bg-surface-container-highest border border-primary"
+                          : "bg-surface-container-low hover:bg-surface-container-highest"
+                      }`}
+                      onClick={() => toggleAddOn(addOn.id)}
                     >
                       <div>
-                        <h4 className="font-bold uppercase tracking-tight text-xl">{title}</h4>
-                        <p className="text-xs text-on-surface-variant mt-2">{text}</p>
+                        <div className="flex items-start justify-between gap-3">
+                          <h4 className="font-bold uppercase tracking-tight text-xl">{addOn.title}</h4>
+                          {selected ? (
+                            <span className="bg-primary text-on-primary px-2 py-1 text-[10px] font-black uppercase tracking-widest">
+                              Toegevoegd
+                            </span>
+                          ) : null}
+                        </div>
+                        <p className="text-xs text-on-surface-variant mt-2">{addOn.description}</p>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="font-black">{price}</span>
                         <span className="material-symbols-outlined text-primary group-hover:scale-125 transition-transform">
-                          add_circle
+                          {selected ? "remove_circle" : "add_circle"}
                         </span>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </section>
             </>

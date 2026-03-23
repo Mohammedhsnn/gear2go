@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BookingPlanningPanel } from "@/components/BookingPlanningPanel";
 import { DashboardLoginForm } from "@/components/DashboardLoginForm";
 import { LogoutButton } from "@/components/LogoutButton";
 import { getCurrentUser } from "@/lib/auth";
@@ -247,6 +248,8 @@ export default async function DashboardPage() {
               )}
             </div>
           </section>
+
+          <BookingPlanningPanel />
         </main>
       </div>
     </div>
