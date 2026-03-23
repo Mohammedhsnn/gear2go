@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { BottomNav } from "@/components/BottomNav";
-import { products } from "@/data/catalog";
+import { HomeCategoryBrowsing } from "@/components/HomeCategoryBrowsing";
 
 export default async function SearchPage({
   searchParams,
@@ -62,59 +62,7 @@ export default async function SearchPage({
           </div>
         </section>
 
-        <section className="px-6 md:px-12 mb-24 md:mb-32">
-          <div className="grid grid-cols-12 grid-rows-2 gap-4 h-[760px] md:h-[800px]">
-            <Link className="col-span-12 md:col-span-7 row-span-2 relative overflow-hidden group cursor-pointer bg-surface-container" href="/search">
-              <img className="w-full h-full object-cover grayscale transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSlWJ6q-AyR7UQ4WJPHGQ1FP023ENzAfWubMGAZ1EX5RDioqU9aYEgw-EfMyE2VXwfiPlkg_pOh5GrAXjpxqqqOzNTCT-gZZQgJh_9gLWKXMRA41e2a6dMdC2ZV8_F3JIt1D-4C9N96gT4Eig_M1jf9Bvlht4fZbz6_5M-JM5HYdim07r79jQcQtK_-ni16CLVofWg9c3DCMrkupCoPbLEB9k5G--dHmGYY8RqOHWQgU2MYkpczGde8agN1oqpZEJvBMgjYwd0MMA" alt="berg en klimsport" />
-              <div className="absolute bottom-0 left-0 p-10 w-full bg-gradient-to-t from-black/80 to-transparent">
-                <h3 className="font-headline text-4xl md:text-5xl font-black text-white uppercase mb-2">BERG- &amp; KLIMSPORT</h3>
-                <p className="text-white/70 font-label tracking-widest text-xs uppercase">142 ITEMS BESCHIKBAAR</p>
-              </div>
-            </Link>
-            <Link className="col-span-6 md:col-span-5 row-span-1 relative overflow-hidden group cursor-pointer bg-surface-container-low" href="/search">
-              <img className="w-full h-full object-cover grayscale transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPvLUOowhcP1At1bRFmijBeUDycHgDAtd_P568kbKahkedyQU7cXQxMAtn1-PCoFHqNiOEiBaTwNJA_FpeeMO5a102EFUc7hJy1pHW-32Odv349vVhi0u0M-MmgORuNVDVAj8w7xKhp-UwATSnxMq6jNABLu2tiquo4izgNWNq6qB9_E6b0i6y1x8F1QFUsNnpVzWU6yg7X3GUbgCX3wGxnLV6QHT769kQ_Jth11RrB1s6YzJij9dvw9neF0JwbcKAM_3wxutyYmQ" alt="wielersport" />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/0 transition-colors"><h3 className="font-headline text-3xl font-black text-white uppercase">WIELERSPORT</h3></div>
-            </Link>
-            <Link className="col-span-6 md:col-span-2 row-span-1 relative overflow-hidden group cursor-pointer bg-surface-container-highest" href="/search">
-              <img className="w-full h-full object-cover grayscale transition-transform duration-700 group-hover:scale-105 opacity-70 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD66Qmw6TPCsaMw7-paAPGBmItiZ8HhfBGJxxe7bi-eEpqsdCSdoXYxqoFx1dhu92YIe7ogXcUaF6KzatdW47jky2DMsJPa2eA7E1MwjSjv34HYBCUeXMVLICLcNWxNTLTrc_nRWhVKG_whHWmUJ-VwNYhKKmroIEZ-ucGDMXkNWEC8G5DGwWCQEf75-vzutHGOhjnvY1aAls_oHDGRGKjkJp6WEsbqAvwhAIeeaFVu_0Vf3VHpoj9S423rDwqKDPARpyK6E94kxEE" alt="wintersport" />
-              <div className="absolute bottom-6 left-6"><h3 className="font-headline text-xl font-black text-white uppercase">WINTERSPORT</h3></div>
-            </Link>
-            <Link className="col-span-12 md:col-span-3 row-span-1 relative overflow-hidden group cursor-pointer bg-surface-container-low" href="/search">
-              <div className="absolute inset-0 bg-primary opacity-90 group-hover:opacity-100 transition-opacity" />
-              <div className="relative h-full flex flex-col justify-between p-8">
-                <span className="material-symbols-outlined text-on-primary text-5xl">surfing</span>
-                <div><h3 className="font-headline text-2xl font-black text-on-primary uppercase">WATERSPORTEN</h3><p className="text-on-primary/60 text-xs mt-2 uppercase tracking-tighter">SURF / SUP / DIVING</p></div>
-              </div>
-            </Link>
-          </div>
-        </section>
-
-        <section className="px-6 md:px-12">
-          <div className="flex items-center justify-between mb-12">
-            <h2 className="font-headline text-4xl font-black uppercase tracking-tight">TRENDING NU</h2>
-            <div className="flex space-x-4">
-              <button className="w-12 h-12 flex items-center justify-center bg-surface-container hover:bg-primary hover:text-white transition-colors"><span className="material-symbols-outlined">arrow_back</span></button>
-              <button className="w-12 h-12 flex items-center justify-center bg-surface-container hover:bg-primary hover:text-white transition-colors"><span className="material-symbols-outlined">arrow_forward</span></button>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {products.slice(0, 4).map((p) => (
-              <Link key={p.id} className="group cursor-pointer" href={`/products/${encodeURIComponent(p.id)}`}>
-                <div className="aspect-[4/5] bg-surface-container-low mb-6 relative overflow-hidden">
-                  <img className="w-full h-full object-cover grayscale mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src={p.imageUrl} alt={p.title} />
-                  <div className="absolute top-4 left-4 bg-primary text-on-primary px-3 py-1 font-label text-[10px] tracking-widest uppercase">POPULAIR</div>
-                </div>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="font-headline font-bold text-xl uppercase">{p.title}</h4>
-                    <p className="text-on-surface-variant text-sm font-label tracking-tight">{p.subtitle}</p>
-                  </div>
-                  <p className="font-headline font-black text-xl">€{Math.round(p.pricePerDayCents / 100)}<span className="text-xs font-normal">/dag</span></p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
+        <HomeCategoryBrowsing />
       </main>
 
       <footer className="bg-primary text-on-primary flex flex-col md:flex-row justify-between items-center px-12 py-20 w-full mt-20">

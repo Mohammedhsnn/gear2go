@@ -3,7 +3,9 @@ export type CategoryId =
   | "wintersport"
   | "bikes"
   | "camping"
-  | "camera";
+  | "camera"
+  | "climbing"
+  | "audio";
 
 export type Product = {
   id: string;
@@ -23,6 +25,8 @@ export const categories: { id: CategoryId; label: string }[] = [
   { id: "bikes", label: "Bikes & MTB" },
   { id: "camping", label: "Camping" },
   { id: "camera", label: "Camera" },
+  { id: "climbing", label: "Klimsport" },
+  { id: "audio", label: "Audio & Muziek" },
 ];
 
 // NOTE: Proof-case catalog. Replace with API later.
@@ -86,6 +90,30 @@ export const products: Product[] = [
     tags: ["Pro Gear"],
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuDHm9g5ddK1AXUxYKypibpKBzFtNkpCJUxd214OZPS7BOsYxQwfmm23aE-97Wz8EmRJc_-JcV7cQseMBxJV9PvJN14LhamDiBhPM4bMyKh-WFK75t8yrGxDj1j22AF6tfv_pwJJH3cGiXm7Q4-5VQ-vqYSSr8HGDKQo29FjAljgsBQ9yQU6oUD5kf4yvcNLWWJffQcihpdd1eqoeo9krLiVvxrZFNhDuuF-5hzMzEWFLBne2VeMDLMyjDKGlZ5n36aGoEJC0oinf20",
+  },
+  {
+    id: "petzl-climb-kit-pro",
+    title: "Petzl Climb Kit Pro",
+    subtitle: "Klimset",
+    categoryId: "climbing",
+    location: "Arnhem",
+    pricePerDayCents: 2800,
+    depositCents: 9000,
+    tags: ["Klimmen", "Outdoor"],
+    imageUrl:
+      "https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    id: "roland-go-keys-studio",
+    title: "Roland GO:KEYS Studio",
+    subtitle: "Synth / Keys",
+    categoryId: "audio",
+    location: "Rotterdam",
+    pricePerDayCents: 3200,
+    depositCents: 11000,
+    tags: ["Studio", "Pro Gear"],
+    imageUrl:
+      "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=1200&q=80",
   },
 ];
 
