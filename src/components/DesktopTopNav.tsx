@@ -63,20 +63,11 @@ export function DesktopTopNav({ active }: DesktopTopNavProps) {
               >
                 Huren
               </Link>
-              <Link
-                className={`${itemBase} ${active === "verhuren" ? itemActive : itemInactive}`}
-                href="/ontdekken"
-              >
-                Verhuren
-              </Link>
-              <Link
-                className={`${itemBase} ${active === "over" ? itemActive : itemInactive}`}
-                href="/dashboard"
-              >
-                Dashboard
-              </Link>
               <Link className={itemBase + " " + itemInactive} href="/hoe-het-werkt">
                 Hoe het werkt
+              </Link>
+              <Link className={itemBase + " " + itemInactive} href="/berichten">
+                Berichten
               </Link>
             </div>
           </div>
@@ -115,9 +106,9 @@ export function DesktopTopNav({ active }: DesktopTopNavProps) {
                 chat_bubble
               </Link>
             </div>
-            <div className="w-10 h-10 bg-surface-container-high overflow-hidden">
+            <Link className="w-10 h-10 bg-surface-container-high overflow-hidden" href="/dashboard">
               <div className="w-full h-full bg-surface-container-highest" />
-            </div>
+            </Link>
           </div>
         </div>
       </div>

@@ -23,21 +23,23 @@ export default async function SearchPage({
           <Link className="font-headline tracking-tight uppercase text-sm font-bold text-primary border-b-4 border-primary pb-1" href="/ontdekken">
             ONTDEKKEN
           </Link>
-          <Link className="font-headline tracking-tight uppercase text-sm font-bold text-on-surface-variant hover:text-primary transition-colors duration-100" href="/ontdekken">
-            VERHUUR
-          </Link>
-          <Link className="font-headline tracking-tight uppercase text-sm font-bold text-on-surface-variant hover:text-primary transition-colors duration-100" href="/dashboard">
-            DASHBOARD
-          </Link>
           <Link className="font-headline tracking-tight uppercase text-sm font-bold text-on-surface-variant hover:text-primary transition-colors duration-100" href="/hoe-het-werkt">
             HOE HET WERKT
           </Link>
+          <Link className="font-headline tracking-tight uppercase text-sm font-bold text-on-surface-variant hover:text-primary transition-colors duration-100" href="/berichten">
+            BERICHTEN
+          </Link>
         </div>
         <div className="flex items-center gap-6">
-          <Link className="font-headline tracking-tight uppercase text-sm font-bold bg-primary text-on-primary px-6 py-3 hover:bg-surface-dim hover:text-primary transition-colors duration-100 hidden md:inline-flex" href="/ontdekken">
+          <Link className="font-headline tracking-tight uppercase text-sm font-bold bg-primary text-on-primary px-6 py-3 hover:bg-surface-dim hover:text-primary transition-colors duration-100 hidden md:inline-flex" href="/gearplaatsen">
             GEAR PLAATSEN
           </Link>
-          <span className="material-symbols-outlined text-3xl cursor-pointer">account_circle</span>
+          <Link href="/cart" className="material-symbols-outlined text-3xl cursor-pointer">
+            shopping_basket
+          </Link>
+          <Link href="/dashboard" className="material-symbols-outlined text-3xl cursor-pointer">
+            account_circle
+          </Link>
         </div>
       </nav>
 

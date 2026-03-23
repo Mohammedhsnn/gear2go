@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { formatEUR } from "@/data/catalog";
+import { formatEUR, getProductById } from "@/data/catalog";
 import { useCart } from "@/state/cart";
 
 type CheckoutFormState = {
@@ -176,6 +176,16 @@ export default function CheckoutPage() {
                   customer: form,
                   totals,
                   lineCount: state.lines.length,
+                  chatContext: (() => {
+                    const first = state.lines[0];
+                    if (!first) return null;
+                    const product = getProductById(first.productId);
+                    return {
+                      productId: first.productId,
+                      productTitle: product?.title ?? "Gehuurd item",
+                      ownerName: "Mark J.",
+                    };
+                  })(),
                 };
                 window.localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(order));
                 clear();

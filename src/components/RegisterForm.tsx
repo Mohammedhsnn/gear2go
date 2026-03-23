@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,7 +43,9 @@ export function RegisterForm() {
             return;
           }
 
-          router.push("/dashboard");
+          const next = searchParams.get("next");
+          const safeNext = next && next.startsWith("/") ? next : "/dashboard";
+          router.push(safeNext);
           router.refresh();
         } finally {
           setLoading(false);

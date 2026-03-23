@@ -28,17 +28,14 @@ export default function CartPage() {
             <Link className="text-on-surface-variant font-headline uppercase tracking-widest hover:bg-surface-dim px-2" href="/ontdekken">
               Zoeken
             </Link>
-            <Link className="text-on-surface-variant font-headline uppercase tracking-widest hover:bg-surface-dim px-2" href="/ontdekken">
-              Verhuren
-            </Link>
             <Link className="text-on-surface-variant font-headline uppercase tracking-widest hover:bg-surface-dim px-2" href="/hoe-het-werkt">
               Hoe het werkt
             </Link>
           </nav>
           <div className="flex items-center gap-6">
             <span className="material-symbols-outlined text-2xl">shopping_cart</span>
-            <Link className="hidden md:inline font-headline font-bold uppercase tracking-widest hover:bg-surface-dim px-4 py-1" href="/dashboard">
-              Account
+            <Link className="hidden md:inline font-headline font-bold uppercase tracking-widest hover:bg-surface-dim px-4 py-1" href="/berichten">
+              Berichten
             </Link>
             <Link className="material-symbols-outlined md:hidden" href="/ontdekken">
               arrow_back

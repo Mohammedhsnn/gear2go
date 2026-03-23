@@ -23,14 +23,17 @@ export default async function RegisterPage() {
             <Link className="text-on-surface-variant hover:text-primary transition-colors font-label uppercase tracking-wider font-bold text-[11px]" href="/ontdekken">
               Ontdekken
             </Link>
-            <Link className="text-on-surface-variant hover:text-primary transition-colors font-label uppercase tracking-wider font-bold text-[11px]" href="/cart">
-              Verhuren
-            </Link>
             <Link className="text-on-surface-variant hover:text-primary transition-colors font-label uppercase tracking-wider font-bold text-[11px]" href="/hoe-het-werkt">
               Hoe Het Werkt
             </Link>
+            <Link className="text-on-surface-variant hover:text-primary transition-colors font-label uppercase tracking-wider font-bold text-[11px]" href="/berichten">
+              Berichten
+            </Link>
             <Link className="bg-primary text-on-primary px-6 py-2 text-sm font-bold uppercase tracking-widest active:scale-95 duration-75" href="/dashboard">
               Inloggen
+            </Link>
+            <Link href="/cart" className="material-symbols-outlined text-2xl cursor-pointer text-primary">
+              shopping_basket
             </Link>
           </div>
           <div className="md:hidden">

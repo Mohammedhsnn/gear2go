@@ -17,6 +17,11 @@ type Order = {
     totalCents: number;
   };
   lineCount: number;
+  chatContext?: {
+    productId: string;
+    productTitle: string;
+    ownerName: string;
+  } | null;
 };
 
 function loadOrder(): Order | null {
@@ -157,13 +162,16 @@ export default function ConfirmationPage() {
       </main>
 
       <div className="fixed bottom-0 left-0 right-0 bg-white p-6 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] flex flex-col gap-3 z-50">
-        <button
-          className="w-full bg-primary text-on-primary font-headline font-bold uppercase py-5 text-sm tracking-widest hover:bg-surface-dim hover:text-primary active:scale-[0.98] transition-all"
-          type="button"
-          onClick={() => alert("Proof case: inbox/chat komt later.")}
+        <Link
+          className="w-full bg-primary text-on-primary font-headline font-bold uppercase py-5 text-sm tracking-widest hover:bg-surface-dim hover:text-primary active:scale-[0.98] transition-all text-center"
+          href={
+            order?.chatContext
+              ? `/berichten?owner=${encodeURIComponent(order.chatContext.ownerName)}&product=${encodeURIComponent(order.chatContext.productTitle)}`
+              : "/berichten"
+          }
         >
           Bericht eigenaar
-        </button>
+        </Link>
         <Link
           className="w-full bg-transparent text-primary border border-outline-variant/30 font-headline font-bold uppercase py-5 text-sm tracking-widest hover:bg-surface-container-low active:scale-[0.98] transition-all text-center"
           href="/search"

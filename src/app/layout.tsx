@@ -27,7 +27,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
+      <body suppressHydrationWarning className={`${inter.variable} ${spaceGrotesk.variable}`}>
         <CartProvider>{children}</CartProvider>
       </body>
     </html>

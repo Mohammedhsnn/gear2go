@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { DashboardLoginForm } from "@/components/DashboardLoginForm";
+import { LogoutButton } from "@/components/LogoutButton";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -30,21 +31,20 @@ export default async function DashboardPage() {
             <Link className="font-headline tracking-tight uppercase text-sm font-bold text-on-surface-variant hover:text-primary transition-colors duration-100" href="/ontdekken">
               ONTDEKKEN
             </Link>
-            <Link className="font-headline tracking-tight uppercase text-sm font-bold text-on-surface-variant hover:text-primary transition-colors duration-100" href="/ontdekken">
-              VERHUUR
-            </Link>
-            <Link className="font-headline tracking-tight uppercase text-sm font-bold text-primary border-b-4 border-primary pb-1" href="/dashboard">
-              DASHBOARD
-            </Link>
             <Link className="font-headline tracking-tight uppercase text-sm font-bold text-on-surface-variant hover:text-primary transition-colors duration-100" href="/hoe-het-werkt">
               HOE HET WERKT
+            </Link>
+            <Link className="font-headline tracking-tight uppercase text-sm font-bold text-on-surface-variant hover:text-primary transition-colors duration-100" href="/berichten">
+              BERICHTEN
             </Link>
           </div>
           <div className="flex items-center gap-6">
             <Link className="font-headline tracking-tight uppercase text-sm font-bold bg-primary text-on-primary px-6 py-3 hover:bg-surface-dim hover:text-primary transition-colors duration-100 hidden md:inline-flex" href="/dashboard">
               INLOGGEN
             </Link>
-            <span className="material-symbols-outlined text-3xl cursor-pointer">account_circle</span>
+            <Link href="/dashboard" className="material-symbols-outlined text-3xl cursor-pointer">
+              account_circle
+            </Link>
           </div>
         </nav>
 
@@ -125,20 +125,18 @@ export default async function DashboardPage() {
           <Link className="font-headline tracking-tight uppercase text-sm font-bold text-on-surface-variant hover:text-primary transition-colors duration-100" href="/ontdekken">
             ONTDEKKEN
           </Link>
-          <Link className="font-headline tracking-tight uppercase text-sm font-bold text-on-surface-variant hover:text-primary transition-colors duration-100" href="/ontdekken">
-            VERHUUR
-          </Link>
-          <Link className="font-headline tracking-tight uppercase text-sm font-bold text-primary border-b-4 border-primary pb-1" href="/dashboard">
-            DASHBOARD
-          </Link>
           <Link className="font-headline tracking-tight uppercase text-sm font-bold text-on-surface-variant hover:text-primary transition-colors duration-100" href="/hoe-het-werkt">
             HOE HET WERKT
           </Link>
+          <Link className="font-headline tracking-tight uppercase text-sm font-bold text-on-surface-variant hover:text-primary transition-colors duration-100" href="/berichten">
+            BERICHTEN
+          </Link>
         </div>
         <div className="flex items-center gap-6">
-          <Link className="font-headline tracking-tight uppercase text-sm font-bold bg-primary text-on-primary px-6 py-3 hover:bg-surface-dim hover:text-primary transition-colors duration-100 hidden md:inline-flex" href="/ontdekken">
+          <Link className="font-headline tracking-tight uppercase text-sm font-bold bg-primary text-on-primary px-6 py-3 hover:bg-surface-dim hover:text-primary transition-colors duration-100 hidden md:inline-flex" href="/gearplaatsen">
             GEAR PLAATSEN
           </Link>
+          <LogoutButton className="hidden md:inline-flex font-headline tracking-tight uppercase text-sm font-bold border border-primary text-primary px-6 py-3 hover:bg-primary hover:text-on-primary transition-colors duration-100 disabled:opacity-60" />
           <div className="relative">
             <span className="material-symbols-outlined text-primary p-2">notifications</span>
             {unreadNotifications > 0 ? <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" /> : null}
