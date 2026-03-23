@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { categories, products, type CategoryId } from "@/data/catalog";
 import { ProductCard } from "@/components/ProductCard";
 
@@ -15,16 +16,23 @@ const iconByCategory: Record<CategoryId, string> = {
 };
 
 export function HomeCategoryBrowsing() {
+  const searchParams = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState<CategoryId>(categories[0]!.id);
   const [sortBy, setSortBy] = useState<"priceAsc" | "none">("priceAsc");
+  const q = (searchParams.get("q") ?? "").trim().toLowerCase();
 
   const filteredAndSorted = useMemo(() => {
-    const scoped = products.filter((p) => p.categoryId === selectedCategory);
+    const scoped = products.filter((p) => {
+      if (p.categoryId !== selectedCategory) return false;
+      if (!q) return true;
+      const haystack = `${p.title} ${p.subtitle} ${p.location} ${p.tags.join(" ")}`.toLowerCase();
+      return haystack.includes(q);
+    });
     if (sortBy === "priceAsc") {
       return [...scoped].sort((a, b) => a.pricePerDayCents - b.pricePerDayCents);
     }
     return scoped;
-  }, [selectedCategory, sortBy]);
+  }, [q, selectedCategory, sortBy]);
 
   return (
     <section className="py-20 md:py-28 px-6 md:px-12 bg-surface">

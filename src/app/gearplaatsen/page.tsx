@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { GearPlaatsenForm } from "@/components/GearPlaatsenForm";
+import { NavSearchBar } from "@/components/NavSearchBar";
 import { getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +19,7 @@ export default async function GearPlaatsenPage() {
           GEAR2GO
         </Link>
         <div className="flex items-center gap-5">
+          <NavSearchBar />
           <Link href="/cart" className="material-symbols-outlined text-2xl text-on-surface-variant hover:text-primary">
             shopping_basket
           </Link>

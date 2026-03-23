@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { RegisterForm } from "@/components/RegisterForm";
+import { NavSearchBar } from "@/components/NavSearchBar";
 import { getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -29,6 +30,7 @@ export default async function RegisterPage() {
             <Link className="text-on-surface-variant hover:text-primary transition-colors font-label uppercase tracking-wider font-bold text-[11px]" href="/berichten">
               Berichten
             </Link>
+            <NavSearchBar />
             <Link className="bg-primary text-on-primary px-6 py-2 text-sm font-bold uppercase tracking-widest active:scale-95 duration-75" href="/dashboard">
               Inloggen
             </Link>

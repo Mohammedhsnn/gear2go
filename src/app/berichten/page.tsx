@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NavSearchBar } from "@/components/NavSearchBar";
 
 export default async function BerichtenPage({
   searchParams,
@@ -28,6 +29,7 @@ export default async function BerichtenPage({
           <Link className="font-headline tracking-tight uppercase text-sm font-bold text-primary border-b-4 border-primary pb-1" href="/berichten">
             BERICHTEN
           </Link>
+          <NavSearchBar />
         </div>
         <div className="flex items-center gap-6">
           <Link className="font-headline tracking-tight uppercase text-sm font-bold bg-primary text-on-primary px-6 py-3 hover:bg-surface-dim hover:text-primary transition-colors duration-100 hidden md:inline-flex" href="/gearplaatsen">

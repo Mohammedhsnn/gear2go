@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { BottomNav } from "@/components/BottomNav";
+import { NavSearchBar } from "@/components/NavSearchBar";
 import { formatEUR, getProductById } from "@/data/catalog";
 import { useCart } from "@/state/cart";
 
@@ -31,6 +32,7 @@ export default function CartPage() {
             <Link className="text-on-surface-variant font-headline uppercase tracking-widest hover:bg-surface-dim px-2" href="/hoe-het-werkt">
               Hoe het werkt
             </Link>
+            <NavSearchBar />
           </nav>
           <div className="flex items-center gap-6">
             <span className="material-symbols-outlined text-2xl">shopping_cart</span>

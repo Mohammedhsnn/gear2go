@@ -1,35 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useState } from "react";
 
 type DesktopTopNavProps = {
   active?: "home" | "ontdekken" | "huren" | "verhuren" | "over";
 };
 
 export function DesktopTopNav({ active }: DesktopTopNavProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const q = searchParams.get("q") ?? "";
-  const focus = searchParams.get("focus") === "1";
-
-  const [value, setValue] = useState(q);
-  const inputRef = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => {
-    setValue(q);
-  }, [q]);
-
-  const shouldFocus = useMemo(() => {
-    return pathname === "/ontdekken" && (focus || q.length > 0);
-  }, [focus, pathname, q.length]);
-
-  useEffect(() => {
-    if (!shouldFocus) return;
-    inputRef.current?.focus();
-  }, [shouldFocus]);
+  const [value, setValue] = useState("");
 
   const itemBase =
     "font-headline text-sm uppercase tracking-wider transition-colors";
@@ -75,21 +54,10 @@ export function DesktopTopNav({ active }: DesktopTopNavProps) {
           <div className="flex items-center gap-6">
             <div className="relative hidden lg:block">
               <input
-                ref={inputRef}
                 className="bg-surface-container-high border-none px-4 py-2 w-64 text-sm focus:ring-1 focus:ring-primary"
                 placeholder="Zoek gear..."
                 value={value}
-                onFocus={() => {
-                  if (pathname !== "/ontdekken") router.push("/ontdekken?focus=1");
-                }}
                 onChange={(e) => setValue(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key !== "Enter") return;
-                  e.preventDefault();
-                  const next = value.trim();
-                  const url = next.length ? `/ontdekken?q=${encodeURIComponent(next)}` : "/ontdekken";
-                  router.push(url);
-                }}
               />
             </div>
             <div className="flex items-center gap-2">

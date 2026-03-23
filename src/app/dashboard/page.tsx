@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { DashboardLoginForm } from "@/components/DashboardLoginForm";
 import { LogoutButton } from "@/components/LogoutButton";
+import { NavSearchBar } from "@/components/NavSearchBar";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -37,6 +38,7 @@ export default async function DashboardPage() {
             <Link className="font-headline tracking-tight uppercase text-sm font-bold text-on-surface-variant hover:text-primary transition-colors duration-100" href="/berichten">
               BERICHTEN
             </Link>
+            <NavSearchBar />
           </div>
           <div className="flex items-center gap-6">
             <Link className="font-headline tracking-tight uppercase text-sm font-bold bg-primary text-on-primary px-6 py-3 hover:bg-surface-dim hover:text-primary transition-colors duration-100 hidden md:inline-flex" href="/dashboard">
@@ -131,6 +133,7 @@ export default async function DashboardPage() {
           <Link className="font-headline tracking-tight uppercase text-sm font-bold text-on-surface-variant hover:text-primary transition-colors duration-100" href="/berichten">
             BERICHTEN
           </Link>
+          <NavSearchBar />
         </div>
         <div className="flex items-center gap-6">
           <Link className="font-headline tracking-tight uppercase text-sm font-bold bg-primary text-on-primary px-6 py-3 hover:bg-surface-dim hover:text-primary transition-colors duration-100 hidden md:inline-flex" href="/gearplaatsen">
