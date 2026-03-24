@@ -58,6 +58,10 @@ model User {
   reviewsReceived Review[] @relation("ReviewsReceived")
 
   notifications   Notification[]
+  
+  conversationsInitiated Conversation[] @relation("UserOne")
+  conversationsParticipated Conversation[] @relation("UserTwo")
+  messages Message[] @relation("MessageAuthor")
 }
 
 model Session {
@@ -142,6 +146,7 @@ model Item {
 
   bookings         Booking[]
   reviews          Review[]
+  conversations    Conversation[]
 
   @@index([ownerId])
   @@index([categoryId])
@@ -167,6 +172,8 @@ model Booking {
 
   ownerId          String
   owner            User         @relation("OwnerBookings", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  conversations    Conversation[]
 
   @@index([itemId])
   @@index([renterId, status])
@@ -211,4 +218,51 @@ model Notification {
 
   @@index([userId, readAt])
   @@index([createdAt])
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userOneId String
+  userOne   User     @relation("UserOne", fields: [userOneId], references: [id], onDelete: Cascade)
+
+  userTwoId String
+  userTwo   User     @relation("UserTwo", fields: [userTwoId], references: [id], onDelete: Cascade)
+
+  itemId    String?
+  item      Item?    @relation(fields: [itemId], references: [id], onDelete: SetNull)
+
+  bookingId String?
+  booking   Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+
+  messages  Message[] @relation("ConversationMessages")
+
+  @@unique([userOneId, userTwoId])
+  @@index([userOneId])
+  @@index([userTwoId])
+  @@index([itemId])
+  @@index([bookingId])
+  @@index([updatedAt])
+}
+
+model Message {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  readAt          DateTime?
+
+  text            String
+  
+  authorId        String
+  author          User     @relation("MessageAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+
+  conversationId  String
+  conversation    Conversation @relation("ConversationMessages", fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([authorId])
+  @@index([createdAt])
+  @@index([readAt])
 }

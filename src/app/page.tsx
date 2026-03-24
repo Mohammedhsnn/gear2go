@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { BottomNav } from "@/components/BottomNav";
 import { HomeCategoryBrowsing } from "@/components/HomeCategoryBrowsing";
 import { NavSearchBar } from "@/components/NavSearchBar";
@@ -123,7 +124,9 @@ export default function Home() {
           </div>
         </section>
 
-        <HomeCategoryBrowsing />
+        <Suspense fallback={<div className="h-screen bg-surface" />}>
+          <HomeCategoryBrowsing />
+        </Suspense>
       </main>
 
       <footer className="bg-[#000000] flex flex-col md:flex-row justify-between items-center px-12 py-20 w-full">

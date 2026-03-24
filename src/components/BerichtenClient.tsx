@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   ownerName: string;
@@ -9,12 +9,22 @@ type Props = {
   itemId: string;
 };
 
-type ChatMessage = {
+type Message = {
   id: string;
-  sender: "me" | "other" | "system";
   text: string;
   createdAt: string;
-  readAt?: string;
+  readAt: string | null;
+  author: {
+    id: string;
+    displayName: string | null;
+    avatarUrl: string | null;
+  };
+};
+
+type Conversation = {
+  id: string;
+  userOne: { id: string; displayName: string | null };
+  userTwo: { id: string; displayName: string | null };
 };
 
 function formatClock(iso: string): string {
@@ -34,48 +44,69 @@ function isoTodayLabel(): string {
     .toUpperCase();
 }
 
-function nextRentalWindow(): { startDateISO: string; endDateISO: string } {
-  const start = new Date();
-  start.setDate(start.getDate() + 1);
-  const end = new Date(start);
-  end.setDate(end.getDate() + 3);
-  const toISODate = (d: Date) => d.toISOString().slice(0, 10);
-  return { startDateISO: toISODate(start), endDateISO: toISODate(end) };
-}
-
 export default function BerichtenClient({
   ownerName,
   productTitle,
   itemId,
 }: Props) {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: crypto.randomUUID(),
-      sender: "other",
-      text: `Hi! Ik ben ${ownerName}. Vragen over ${productTitle}?`,
-      createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-    },
-  ]);
+  const [currentUser, setCurrentUser] = useState<{ id: string; displayName: string | null } | null>(null);
+  const [conversation, setConversation] = useState<Conversation | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const [otherTyping, setOtherTyping] = useState(false);
-  const [requestSending, setRequestSending] = useState(false);
-  const [requestError, setRequestError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const [messageError, setMessageError] = useState<string | null>(null);
   const [messageSending, setMessageSending] = useState(false);
+  const [requestSending, setRequestSending] = useState(false);
+  const [requestError, setRequestError] = useState<string | null>(null);
 
-  const latestMine = useMemo(
-    () => [...messages].reverse().find((m) => m.sender === "me") ?? null,
-    [messages],
-  );
+  // Get current user and load conversations
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (!res.ok) {
+          window.location.href = "/register";
+          return;
+        }
+        const user = await res.json();
+        setCurrentUser(user);
+      } catch (error) {
+        console.error("Failed to get current user:", error);
+        window.location.href = "/register";
+      }
+    };
+
+    loadUser();
+  }, []);
+
+  // Load or create conversation once we have current user
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const loadConversation = async () => {
+      try {
+        // For now, we'll just load them from the page params
+        // In a real app, you'd get the other user ID from the params or URL
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to load conversation:", error);
+        setMessageError("Kon gesprek niet laden. Probeer opnieuw.");
+        setLoading(false);
+      }
+    };
+
+    loadConversation();
+  }, [currentUser]);
 
   const sendMessage = async () => {
     const text = input.trim();
-    if (!text || messageSending) return;
+    if (!text || messageSending || !conversation) return;
 
     setMessageSending(true);
     setMessageError(null);
 
     try {
+      // Moderate message
       const moderationRes = await fetch("/api/moderate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -87,7 +118,7 @@ export default function BerichtenClient({
         return;
       }
 
-      const moderation = (await moderationRes.json()) as {
+      const moderation = await moderationRes.json() as {
         blocked: boolean;
         text: string;
       };
@@ -98,39 +129,27 @@ export default function BerichtenClient({
         return;
       }
 
-      const cleanText = moderation.text;
-      const now = new Date().toISOString();
+      // Send message
+      const messageRes = await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          conversationId: conversation.id,
+          text: moderation.text,
+        }),
+      });
+
+      if (!messageRes.ok) {
+        setMessageError("Bericht kon niet verzonden worden.");
+        return;
+      }
+
+      const newMessage = await messageRes.json() as Message;
+      setMessages((prev) => [...prev, newMessage]);
       setInput("");
-
-      const myId = crypto.randomUUID();
-      setMessages((prev) => [
-        ...prev,
-        { id: myId, sender: "me", text: cleanText, createdAt: now },
-      ]);
-
-      setOtherTyping(true);
-      setTimeout(() => {
-        setOtherTyping(false);
-        const replyText =
-          "Top, ik heb je bericht gezien. Als je wilt, kun je direct hieronder een huuraanvraag versturen.";
-        const replyAt = new Date().toISOString();
-        setMessages((prev) => {
-          const withRead = prev.map((m) =>
-            m.id === myId ? { ...m, readAt: replyAt } : m,
-          );
-          return [
-            ...withRead,
-            {
-              id: crypto.randomUUID(),
-              sender: "other",
-              text: replyText,
-              createdAt: replyAt,
-            },
-          ];
-        });
-      }, 1300);
-    } catch {
-      setMessageError("Moderatie tijdelijk niet beschikbaar. Probeer opnieuw.");
+    } catch (error) {
+      console.error("Failed to send message:", error);
+      setMessageError("Fout bij verzenden. Probeer opnieuw.");
     } finally {
       setMessageSending(false);
     }
@@ -144,33 +163,63 @@ export default function BerichtenClient({
     }
     setRequestSending(true);
 
-    const { startDateISO, endDateISO } = nextRentalWindow();
-    const res = await fetch("/api/bookings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ itemId, startDateISO, endDateISO }),
-    });
+    try {
+      const start = new Date();
+      start.setDate(start.getDate() + 1);
+      const end = new Date(start);
+      end.setDate(end.getDate() + 3);
 
-    if (!res.ok) {
-      const data = (await res.json().catch(() => null)) as { error?: string } | null;
-      setRequestError(data?.error || "Huuraanvraag versturen is niet gelukt.");
+      const res = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          itemId,
+          startDateISO: start.toISOString().slice(0, 10),
+          endDateISO: end.toISOString().slice(0, 10),
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({ error: "Onbekende fout" })) as { error?: string };
+        setRequestError(data?.error || "Huuraanvraag versturen is niet gelukt.");
+        setRequestSending(false);
+        return;
+      }
+
       setRequestSending(false);
-      return;
+    } catch (error) {
+      console.error("Failed to send rental request:", error);
+      setRequestError("Fout bij verzenden huuraanvraag.");
+      setRequestSending(false);
     }
-
-    const payload = (await res.json()) as { booking: { id: string; status: string } };
-    const when = new Date().toISOString();
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        sender: "system",
-        text: `Huuraanvraag verzonden. Status: ${payload.booking.status}.`,
-        createdAt: when,
-      },
-    ]);
-    setRequestSending(false);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <span className="text-on-surface-variant">Laden...</span>
+      </div>
+    );
+  }
+
+  if (!currentUser) {
+    return (
+      <div className="flex items-center justify-center h-full flex-col gap-4">
+        <span className="text-on-surface-variant">Je moet ingelogd zijn om te chatten.</span>
+        <Link href="/register" className="bg-primary text-on-primary px-6 py-3 font-label text-xs uppercase tracking-widest">
+          Inloggen
+        </Link>
+      </div>
+    );
+  }
+
+  if (!conversation) {
+    return (
+      <div className="flex items-center justify-center h-full flex-col gap-4">
+        <span className="text-on-surface-variant">Gesprek laden...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-surface text-on-surface overflow-hidden min-h-screen">
@@ -237,7 +286,9 @@ export default function BerichtenClient({
                   </div>
                   <div className="flex-grow overflow-hidden">
                     <div className="flex justify-between items-center">
-                      <h4 className="font-headline font-bold text-sm truncate uppercase tracking-tight">{ownerName}</h4>
+                      <h4 className="font-headline font-bold text-sm truncate uppercase tracking-tight">
+                        {ownerName}
+                      </h4>
                       <span className="text-[10px] text-on-surface-variant font-label">
                         {messages.length ? formatClock(messages[messages.length - 1]!.createdAt) : "--:--"}
                       </span>
@@ -282,45 +333,37 @@ export default function BerichtenClient({
                 </span>
               </div>
 
-              {messages.map((m) => {
-                if (m.sender === "system") {
+              {messages.length === 0 ? (
+                <div className="flex items-center justify-center h-full">
+                  <span className="text-on-surface-variant text-sm">
+                    Nog geen berichten. Start het gesprek!
+                  </span>
+                </div>
+              ) : (
+                messages.map((m) => {
+                  const isMine = m.author.id === currentUser?.id;
                   return (
-                    <div key={m.id} className="flex justify-center">
-                      <span className="bg-primary text-on-primary px-3 py-2 text-[10px] uppercase tracking-widest font-bold">
-                        {m.text} - {formatClock(m.createdAt)}
-                      </span>
+                    <div
+                      key={m.id}
+                      className={`flex items-start gap-3 max-w-[82%] ${isMine ? "self-end flex-row-reverse text-right" : ""}`}
+                    >
+                      {!isMine ? (
+                        <div className="w-8 h-8 bg-surface-container-high flex items-center justify-center mt-1">
+                          <span className="material-symbols-outlined text-sm">person</span>
+                        </div>
+                      ) : null}
+                      <div>
+                        <div className={isMine ? "bg-primary p-4 text-sm leading-relaxed text-on-primary" : "bg-surface-container-high p-4 text-sm leading-relaxed text-on-surface"}>
+                          {m.text}
+                        </div>
+                        <span className="text-[10px] font-label text-on-surface-variant mt-2 inline-block">
+                          {formatClock(m.createdAt)}
+                        </span>
+                      </div>
                     </div>
                   );
-                }
-
-                const isMine = m.sender === "me";
-                return (
-                  <div
-                    key={m.id}
-                    className={`flex items-start gap-3 max-w-[82%] ${isMine ? "self-end flex-row-reverse text-right" : ""}`}
-                  >
-                    {!isMine ? (
-                      <div className="w-8 h-8 bg-surface-container-high flex items-center justify-center mt-1">
-                        <span className="material-symbols-outlined text-sm">person</span>
-                      </div>
-                    ) : null}
-                    <div>
-                      <div className={isMine ? "bg-primary p-4 text-sm leading-relaxed text-on-primary" : "bg-surface-container-high p-4 text-sm leading-relaxed text-on-surface"}>
-                        {m.text}
-                      </div>
-                      <span className="text-[10px] font-label text-on-surface-variant mt-2 inline-block">
-                        {formatClock(m.createdAt)}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-
-              {otherTyping ? (
-                <div className="text-xs uppercase tracking-widest text-on-surface-variant font-label">
-                  {ownerName} typt...
-                </div>
-              ) : null}
+                })
+              )}
             </div>
 
             <footer className="p-6 bg-surface-container-low border-t border-outline-variant/20">
@@ -332,13 +375,6 @@ export default function BerichtenClient({
               {requestError ? (
                 <div className="mb-3 bg-[#fee2e2] text-[#991b1b] px-4 py-3 text-xs font-semibold uppercase tracking-wider">
                   {requestError}
-                </div>
-              ) : null}
-              {latestMine ? (
-                <div className="mb-3 text-[10px] uppercase tracking-widest text-on-surface-variant font-label text-right">
-                  {latestMine.readAt
-                    ? `Gelezen ${formatClock(latestMine.readAt)}`
-                    : "Verzonden"}
                 </div>
               ) : null}
               <div className="bg-surface-container-lowest p-2 flex items-end gap-2 border border-outline-variant/20">
