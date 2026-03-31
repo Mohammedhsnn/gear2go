@@ -1,7 +1,16 @@
 import Link from "next/link";
-import { formatEUR, type Product } from "@/data/catalog";
+import { formatEUR } from "@/data/catalog";
 
-export function ProductCard({ product }: { product: Product }) {
+export type ProductCardData = {
+  id: string;
+  title: string;
+  location: string;
+  pricePerDayCents: number;
+  imageUrl: string;
+  tags?: string[];
+};
+
+export function ProductCard({ product }: { product: ProductCardData }) {
   return (
     <Link
       href={`/products/${encodeURIComponent(product.id)}`}
@@ -24,7 +33,7 @@ export function ProductCard({ product }: { product: Product }) {
         {product.location} • Dagprijs
       </p>
       <div className="flex gap-2 flex-wrap">
-        {product.tags.slice(0, 3).map((t) => (
+        {(product.tags ?? []).slice(0, 3).map((t) => (
           <span
             key={t}
             className={

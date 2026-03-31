@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { BottomNav } from "@/components/BottomNav";
-import { HomeCategoryBrowsing } from "@/components/HomeCategoryBrowsing";
 import { NavSearchBar } from "@/components/NavSearchBar";
 import { products, formatEUR } from "@/data/catalog";
+import { getCurrentUser } from "@/lib/auth";
 
-export default function Home() {
+export default async function Home() {
+  const user = await getCurrentUser();
   const heroProduct = products.find((p) => p.id === "trek-fuel-ex-98") ?? products[0]!;
 
   return (
@@ -36,14 +37,22 @@ export default function Home() {
           <Link href="/cart" className="material-symbols-outlined text-3xl cursor-pointer">
             shopping_basket
           </Link>
-          <Link href="/dashboard" className="material-symbols-outlined text-3xl cursor-pointer">
-            account_circle
+          <Link href="/dashboard" className="w-10 h-10 bg-surface-container-high flex items-center justify-center overflow-hidden rounded-full flex-shrink-0 hover:ring-2 hover:ring-primary transition-all cursor-pointer">
+            {user?.avatarUrl ? (
+              <img 
+                src={user.avatarUrl} 
+                alt={user.displayName || "Avatar"} 
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="material-symbols-outlined text-xl">account_circle</span>
+            )}
           </Link>
         </div>
       </nav>
 
       <main className="pt-24">
-        <section className="min-h-[70dvh] md:min-h-[921px] flex flex-col justify-center px-6 md:px-12 relative overflow-hidden bg-surface">
+        <section className="min-h-[60dvh] md:min-h-[750px] flex flex-col justify-center px-6 md:px-12 relative overflow-hidden bg-surface">
           <div className="absolute top-0 right-0 w-1/2 h-full bg-surface-container-low -z-10 skew-x-[-12deg] translate-x-20 hidden md:block" />
           <div className="max-w-6xl z-10">
             <p className="font-headline font-bold text-sm tracking-[0.2em] mb-4 text-primary">PROJECT CARBON v1.0</p>
@@ -125,7 +134,104 @@ export default function Home() {
         </section>
 
         <Suspense fallback={<div className="h-screen bg-surface" />}>
-          <HomeCategoryBrowsing />
+          <section className="pt-12 md:pt-20 pb-20 md:pb-32 px-6 md:px-12 bg-surface-container-low">
+            <div className="max-w-7xl mx-auto">
+              <div className="mb-20">
+                <span className="inline-block bg-primary text-on-primary px-3 py-1 font-label text-[10px] tracking-widest font-bold mb-4 uppercase">WAAROM GEAR2GO?</span>
+                <h2 className="font-headline font-black text-5xl md:text-7xl uppercase tracking-tighter leading-tight mb-4">MAAK HET MAKKELIJK.</h2>
+                <p className="font-body text-on-surface-variant text-lg max-w-2xl">Huur professionele uitrusting van lokale makers, veilig en verzekerd. Geen gedoe, geen risico.</p>
+              </div>
+              
+              <div className="grid md:grid-cols-3 gap-8">
+                <div className="bg-surface-container p-10 flex flex-col gap-4">
+                  <div className="w-16 h-16 bg-primary flex items-center justify-center rounded">
+                    <span className="material-symbols-outlined text-on-primary text-4xl" style={{ fontSize: '2rem' }}>verified</span>
+                  </div>
+                  <h3 className="font-headline font-bold text-2xl uppercase">VEILIG & GEVERIFIEERD</h3>
+                  <p className="font-body text-on-surface-variant">Alle makers zijn geverifieerd en hun gear is gekeurd. Volledig verzekerd tegen schade en diefstal.</p>
+                </div>
+                
+                <div className="bg-surface-container p-10 flex flex-col gap-4">
+                  <div className="w-16 h-16 bg-primary flex items-center justify-center rounded">
+                    <span className="material-symbols-outlined text-on-primary text-4xl" style={{ fontSize: '2rem' }}>schedule</span>
+                  </div>
+                  <h3 className="font-headline font-bold text-2xl uppercase">FLEXIBEL BOEKEN</h3>
+                  <p className="font-body text-on-surface-variant">Boek per uur, dag of week. Maak makkelijk afspraken met makers en betaal veilig via het platform.</p>
+                </div>
+                
+                <div className="bg-surface-container p-10 flex flex-col gap-4">
+                  <div className="w-16 h-16 bg-primary flex items-center justify-center rounded">
+                    <span className="material-symbols-outlined text-on-primary text-4xl" style={{ fontSize: '2rem' }}>local_shipping</span>
+                  </div>
+                  <h3 className="font-headline font-bold text-2xl uppercase">LOKALE BEZORGING</h3>
+                  <p className="font-body text-on-surface-variant">Haal je gear op bij de maker of laat het bezorgen. Alles gebeurt in je buurt, geen gedoe met verzending.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+          
+          <section className="py-20 md:py-32 px-6 md:px-12 bg-surface">
+            <div className="max-w-7xl mx-auto">
+              <div className="grid md:grid-cols-2 gap-16 items-center">
+                <div className="flex flex-col gap-8">
+                  <div>
+                    <span className="inline-block bg-primary text-on-primary px-3 py-1 font-label text-[10px] tracking-widest font-bold mb-4 uppercase">HOE IT WORKS</span>
+                    <h2 className="font-headline font-black text-5xl md:text-6xl uppercase tracking-tighter leading-tight">IN 3 SIMPELE STAPPEN</h2>
+                  </div>
+                  
+                  <div className="flex gap-6 items-start">
+                    <div className="flex-shrink-0 w-12 h-12 bg-primary text-on-primary rounded-full flex items-center justify-center font-headline font-bold text-xl">1</div>
+                    <div>
+                      <h3 className="font-headline font-bold text-xl uppercase mb-2">Zoek & Vergelijk</h3>
+                      <p className="font-body text-on-surface-variant">Vind de perfecte gear op jouw budget. Filter op categorie, locatie en prijs.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-6 items-start">
+                    <div className="flex-shrink-0 w-12 h-12 bg-primary text-on-primary rounded-full flex items-center justify-center font-headline font-bold text-xl">2</div>
+                    <div>
+                      <h3 className="font-headline font-bold text-xl uppercase mb-2">Betaal & Bevestig</h3>
+                      <p className="font-body text-on-surface-variant">Betaal veilig via het platform. Maak een afspraak met de maker voor overdracht.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-6 items-start">
+                    <div className="flex-shrink-0 w-12 h-12 bg-primary text-on-primary rounded-full flex items-center justify-center font-headline font-bold text-xl">3</div>
+                    <div>
+                      <h3 className="font-headline font-bold text-xl uppercase mb-2">Huur & Geniet</h3>
+                      <p className="font-body text-on-surface-variant">Start je avontuur. Lever de gear op tijd in en laat een review achter.</p>
+                    </div>
+                  </div>
+
+                  <Link href="/hoe-het-werkt" className="bg-primary text-on-primary font-headline font-bold px-8 py-4 uppercase tracking-widest hover:bg-tertiary transition-colors w-fit">
+                    LEES MEER
+                  </Link>
+                </div>
+                
+                <div className="relative h-[500px] bg-surface-container-high rounded-lg overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-primary text-9xl opacity-20" style={{ fontSize: '5rem' }}>auto_awesome</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="py-20 md:py-32 px-6 md:px-12 bg-primary text-on-primary">
+            <div className="max-w-7xl mx-auto text-center">
+              <h2 className="font-headline font-black text-5xl md:text-7xl uppercase tracking-tighter mb-8 leading-tight">KLAAR OM TE BEGINNEN?</h2>
+              <p className="font-body text-on-primary-fixed-variant text-xl mb-12 max-w-2xl mx-auto">Of je nu wilt huren of verhuren, GEAR2GO maakt het simpel. Sluit je aan bij duizenden makers en renters.</p>
+              
+              <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                <Link href="/search" className="bg-on-primary text-primary font-headline font-bold py-6 px-8 uppercase tracking-widest hover:bg-surface-dim transition-all text-center">
+                  HUUR GEAR
+                </Link>
+                <Link href="/gearplaatsen" className="bg-transparent border-2 border-on-primary text-on-primary font-headline font-bold py-6 px-8 uppercase tracking-widest hover:bg-on-primary hover:text-primary transition-all text-center">
+                  VERHUUR GEAR
+                </Link>
+              </div>
+            </div>
+          </section>
         </Suspense>
       </main>
 

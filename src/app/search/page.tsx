@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BottomNav } from "@/components/BottomNav";
 import { HomeCategoryBrowsing } from "@/components/HomeCategoryBrowsing";
 import { NavSearchBar } from "@/components/NavSearchBar";
+import { getCurrentUser } from "@/lib/auth";
 
 export default async function SearchPage({
   searchParams,
@@ -10,6 +11,7 @@ export default async function SearchPage({
 }) {
   const { q } = await searchParams;
   const queryRaw = (q ?? "").trim();
+  const user = await getCurrentUser();
 
   return (
     <div className="bg-surface text-on-surface min-h-dvh">
@@ -39,8 +41,16 @@ export default async function SearchPage({
           <Link href="/cart" className="material-symbols-outlined text-3xl cursor-pointer">
             shopping_basket
           </Link>
-          <Link href="/dashboard" className="material-symbols-outlined text-3xl cursor-pointer">
-            account_circle
+          <Link href="/dashboard" className="w-10 h-10 bg-surface-container-high flex items-center justify-center overflow-hidden rounded-full flex-shrink-0 hover:ring-2 hover:ring-primary transition-all cursor-pointer">
+            {user?.avatarUrl ? (
+              <img 
+                src={user.avatarUrl} 
+                alt={user.displayName || "Avatar"} 
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="material-symbols-outlined text-xl">account_circle</span>
+            )}
           </Link>
         </div>
       </nav>

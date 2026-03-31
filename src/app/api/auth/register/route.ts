@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { randomUUID } from "crypto";
 import { Prisma } from "@/generated/prisma";
 import { hashPassword } from "@/lib/auth";
 import { isEmailDeliveryConfigured } from "@/lib/email";
@@ -6,6 +7,72 @@ import { issueEmailVerification } from "@/lib/emailVerification";
 import { prisma } from "@/lib/prisma";
 
 type BasicUser = { id: string; email: string; displayName: string | null; createdAt: Date };
+
+const SYSTEM_EMAIL = "gear2go.system@local";
+
+async function createWelcomeInboxForUser(user: BasicUser) {
+  let systemUser = await prisma.user.findUnique({
+    where: { email: SYSTEM_EMAIL },
+    select: { id: true, displayName: true },
+  });
+
+  if (!systemUser) {
+    const systemPassword = await hashPassword(`system-${randomUUID()}`);
+    systemUser = await prisma.user.create({
+      data: {
+        email: SYSTEM_EMAIL,
+        passwordHash: systemPassword,
+        displayName: "Gear2Go",
+        emailVerifiedAt: new Date(),
+      },
+      select: { id: true, displayName: true },
+    });
+  }
+
+  const sortedIds = [user.id, systemUser.id].sort();
+  const conversation = await prisma.conversation.upsert({
+    where: {
+      userOneId_userTwoId: {
+        userOneId: sortedIds[0],
+        userTwoId: sortedIds[1],
+      },
+    },
+    update: {},
+    create: {
+      userOneId: sortedIds[0],
+      userTwoId: sortedIds[1],
+    },
+    select: { id: true },
+  });
+
+  const hasMessage = await prisma.message.findFirst({
+    where: {
+      conversationId: conversation.id,
+      authorId: systemUser.id,
+    },
+    select: { id: true },
+  });
+
+  if (!hasMessage) {
+    await prisma.message.create({
+      data: {
+        conversationId: conversation.id,
+        authorId: systemUser.id,
+        text: "Welkom bij Gear2Go! Goed dat je er bent. Je kunt nu direct berichten sturen, gear plaatsen en veilig huren.",
+      },
+    });
+  }
+
+  await prisma.notification.create({
+    data: {
+      userId: user.id,
+      type: "SYSTEM",
+      title: "Welkom bij Gear2Go",
+      body: "Je hebt een nieuw welkomstbericht in Berichten.",
+      data: { conversationId: conversation.id },
+    },
+  });
+}
 
 export async function POST(req: Request) {
   try {
@@ -89,6 +156,12 @@ export async function POST(req: Request) {
     } catch (error) {
       console.error("Register failed during privacySettings.create:", error);
       throw error;
+    }
+
+    try {
+      await createWelcomeInboxForUser(user);
+    } catch (error) {
+      console.error("Register warning: failed to seed welcome inbox:", error);
     }
 
     const result = await issueEmailVerification(user, { cooldownSeconds: 0 });

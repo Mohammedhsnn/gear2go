@@ -168,9 +168,17 @@ export default async function DashboardPage() {
           <Link href="/cart" className="material-symbols-outlined text-primary p-2">
             shopping_basket
           </Link>
-          <div className="w-10 h-10 bg-surface-container-high flex items-center justify-center overflow-hidden">
-            <span className="font-bold text-xs">{user.displayName?.slice(0, 1).toUpperCase() || "U"}</span>
-          </div>
+          <Link href="/settings" className="w-10 h-10 bg-surface-container-high flex items-center justify-center overflow-hidden rounded-full flex-shrink-0 hover:ring-2 hover:ring-primary transition-all">
+            {user.avatarUrl ? (
+              <img 
+                src={user.avatarUrl} 
+                alt={user.displayName || "Avatar"} 
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="font-bold text-xs">{user.displayName?.slice(0, 1).toUpperCase() || "U"}</span>
+            )}
+          </Link>
         </div>
       </header>
 
@@ -185,13 +193,17 @@ export default async function DashboardPage() {
               <span className="material-symbols-outlined">dashboard</span>
               Overview
             </Link>
-            <Link className="text-on-surface-variant px-4 py-3 flex items-center gap-3 font-headline font-bold uppercase text-xs tracking-wider hover:text-primary transition-colors" href="/dashboard#my-gear">
+            <Link className="text-on-surface-variant px-4 py-3 flex items-center gap-3 font-headline font-bold uppercase text-xs tracking-wider hover:text-primary transition-colors" href="/dashboard/my-gear">
               <span className="material-symbols-outlined">sports_kabaddi</span>
               My Gear
             </Link>
             <Link className="text-on-surface-variant px-4 py-3 flex items-center gap-3 font-headline font-bold uppercase text-xs tracking-wider hover:text-primary transition-colors" href="/dashboard#rentals">
               <span className="material-symbols-outlined">swap_horiz</span>
               Rentals
+            </Link>
+            <Link className="text-on-surface-variant px-4 py-3 flex items-center gap-3 font-headline font-bold uppercase text-xs tracking-wider hover:text-primary transition-colors" href="/settings">
+              <span className="material-symbols-outlined">settings</span>
+              Settings
             </Link>
           </nav>
         </aside>
@@ -236,8 +248,8 @@ export default async function DashboardPage() {
           <section id="my-gear" className="scroll-mt-28">
             <div className="flex justify-between items-end mb-8 border-b border-primary/5 pb-4">
               <h2 className="text-3xl font-black uppercase tracking-tight font-headline">Mijn Items</h2>
-              <Link className="text-xs font-bold uppercase tracking-widest underline underline-offset-4 hover:text-on-surface-variant" href="/ontdekken">
-                Bekijk alle gear
+              <Link className="text-xs font-bold uppercase tracking-widest underline underline-offset-4 hover:text-on-surface-variant" href="/dashboard/my-gear">
+                Bekijk al mijn gear
               </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

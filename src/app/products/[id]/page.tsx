@@ -4,6 +4,18 @@ import { AddToCartButton } from "@/components/AddToCartButton";
 import { BottomNav } from "@/components/BottomNav";
 import { NavSearchBar } from "@/components/NavSearchBar";
 import { formatEUR, getProductById } from "@/data/catalog";
+import { prisma } from "@/lib/prisma";
+
+type ProductViewModel = {
+  id: string;
+  title: string;
+  subtitle: string;
+  imageUrl: string;
+  pricePerDayCents: number;
+  tags: string[];
+  description: string;
+  ownerName: string;
+};
 
 export default async function ProductDetailPage({
   params,
@@ -11,9 +23,48 @@ export default async function ProductDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const product = getProductById(id);
-  if (!product) notFound();
-  const ownerName = "Mark J.";
+  const dbItem = await prisma.item.findUnique({
+    where: { id },
+    include: {
+      category: true,
+      owner: {
+        select: {
+          displayName: true,
+        },
+      },
+    },
+  });
+
+  const catalogProduct = dbItem ? null : getProductById(id);
+  if (!dbItem && !catalogProduct) notFound();
+
+  const product: ProductViewModel = dbItem
+    ? {
+        id: dbItem.id,
+        title: dbItem.title,
+        subtitle: dbItem.subtitle || dbItem.category?.label || "Gear",
+        imageUrl:
+          dbItem.imageUrl ||
+          "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=1200&q=80",
+        pricePerDayCents: dbItem.pricePerDayCents,
+        tags: [dbItem.category?.label || "Gear"],
+        description:
+          dbItem.description ||
+          "Deze listing is geplaatst door een verhuurder op Gear2Go. Neem contact op voor details en beschikbaarheid.",
+        ownerName: dbItem.owner?.displayName || "Verhuurder",
+      }
+    : {
+        id: catalogProduct!.id,
+        title: catalogProduct!.title,
+        subtitle: catalogProduct!.subtitle,
+        imageUrl: catalogProduct!.imageUrl,
+        pricePerDayCents: catalogProduct!.pricePerDayCents,
+        tags: catalogProduct!.tags,
+        description: "Proof case product detail. In de echte versie komt dit uit je backend.",
+        ownerName: "Mark J.",
+      };
+
+  const ownerName = product.ownerName;
   const chatHref = `/berichten?owner=${encodeURIComponent(ownerName)}&product=${encodeURIComponent(product.title)}&itemId=${encodeURIComponent(product.id)}`;
 
   return (
@@ -110,7 +161,7 @@ export default async function ProductDetailPage({
             Beschrijving
           </h2>
           <p className="text-body-md leading-relaxed text-on-surface-variant max-w-prose">
-            Proof case product detail. In de echte versie komt dit uit je backend.
+            {product.description}
           </p>
         </section>
       </main>
@@ -183,7 +234,7 @@ export default async function ProductDetailPage({
                 <div className="flex items-center gap-6">
                   <div className="w-16 h-16 bg-surface-container-highest overflow-hidden" />
                   <div className="flex flex-col">
-                    <span className="text-xl font-bold font-headline">Mark J.</span>
+                    <span className="text-xl font-bold font-headline">{ownerName}</span>
                     <div className="flex items-center gap-2 mt-1">
                       <span
                         className="material-symbols-outlined text-sm"

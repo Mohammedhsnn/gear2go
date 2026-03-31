@@ -16,6 +16,9 @@ export async function GET(req: NextRequest) {
           { userOneId: user.id },
           { userTwoId: user.id },
         ],
+        NOT: {
+          AND: [{ userOneId: user.id }, { userTwoId: user.id }],
+        },
       },
       include: {
         userOne: {
@@ -36,6 +39,7 @@ export async function GET(req: NextRequest) {
           select: {
             id: true,
             title: true,
+            imageUrl: true,
           },
         },
         messages: {

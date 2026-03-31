@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { NavSearchBar } from "@/components/NavSearchBar";
+import { getCurrentUser } from "@/lib/auth";
 
-export default function HoeHetWerktPage() {
+export default async function HoeHetWerktPage() {
+  const user = await getCurrentUser();
   return (
     <div className="bg-background text-on-background selection:bg-primary selection:text-on-primary">
       <nav className="fixed top-0 z-50 w-full flex justify-between items-center px-6 md:px-12 py-6 bg-surface bg-opacity-80 backdrop-blur-md">
@@ -30,8 +32,16 @@ export default function HoeHetWerktPage() {
           <Link href="/cart" className="material-symbols-outlined text-3xl cursor-pointer">
             shopping_basket
           </Link>
-          <Link href="/dashboard" className="material-symbols-outlined text-3xl cursor-pointer">
-            account_circle
+          <Link href="/dashboard" className="w-10 h-10 bg-surface-container-high flex items-center justify-center overflow-hidden rounded-full flex-shrink-0 hover:ring-2 hover:ring-primary transition-all cursor-pointer">
+            {user?.avatarUrl ? (
+              <img 
+                src={user.avatarUrl} 
+                alt={user.displayName || "Avatar"} 
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="material-symbols-outlined text-xl">account_circle</span>
+            )}
           </Link>
         </div>
       </nav>
