@@ -8,7 +8,7 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-headline",
   subsets: ["latin"],
 });
-
+ 
 export const metadata: Metadata = {
   title: "Stitch screens",
   description: "Imported screens as a Next.js app",

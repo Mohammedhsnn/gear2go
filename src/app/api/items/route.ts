@@ -6,28 +6,62 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const q = (url.searchParams.get("q") ?? "").trim().toLowerCase();
   const cat = (url.searchParams.get("cat") ?? "").trim();
+  const user = await getCurrentUser();
 
-  const items = await prisma.item.findMany({
-    where: {
-      status: "PUBLISHED",
-      ...(cat ? { category: { slug: cat } } : {}),
-      ...(q
-        ? {
-            OR: [
-              { title: { contains: q } },
-              { subtitle: { contains: q } },
-              { description: { contains: q } },
-            ],
-          }
-        : {}),
-    },
-    include: {
-      category: true,
-      owner: { select: { id: true, displayName: true, avatarUrl: true } },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 50,
-  });
+  const [publishedItems, ownItems] = await Promise.all([
+    prisma.item.findMany({
+      where: {
+        status: "PUBLISHED",
+        ...(cat ? { category: { slug: cat } } : {}),
+        ...(q
+          ? {
+              OR: [
+                { title: { contains: q } },
+                { subtitle: { contains: q } },
+                { description: { contains: q } },
+              ],
+            }
+          : {}),
+      },
+      include: {
+        category: true,
+        owner: { select: { id: true, displayName: true, avatarUrl: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+    }),
+    user
+      ? prisma.item.findMany({
+          where: {
+            ownerId: user.id,
+            ...(cat ? { category: { slug: cat } } : {}),
+            ...(q
+              ? {
+                  OR: [
+                    { title: { contains: q } },
+                    { subtitle: { contains: q } },
+                    { description: { contains: q } },
+                  ],
+                }
+              : {}),
+          },
+          include: {
+            category: true,
+            owner: { select: { id: true, displayName: true, avatarUrl: true } },
+          },
+          orderBy: { createdAt: "desc" },
+          take: 100,
+        })
+      : Promise.resolve([]),
+  ]);
+
+  const byId = new Map<string, (typeof publishedItems)[number]>();
+  for (const item of [...ownItems, ...publishedItems]) {
+    byId.set(item.id, item);
+  }
+  const items = [...byId.values()].sort(
+    (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+  );
 
   return NextResponse.json({ items });
 }
@@ -61,6 +95,9 @@ export async function POST(req: Request) {
   }
   if (!Number.isFinite(pricePerDay) || pricePerDay <= 0) {
     return NextResponse.json({ error: "Prijs per dag moet groter zijn dan 0." }, { status: 400 });
+  }
+  if (!location || location.length < 6) {
+    return NextResponse.json({ error: "Vul een geldig adres in (minimaal 6 tekens)." }, { status: 400 });
   }
 
   const fallbackCategory = await prisma.category.findFirst({

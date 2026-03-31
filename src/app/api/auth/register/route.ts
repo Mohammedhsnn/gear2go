@@ -55,14 +55,22 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ user });
-  } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === "P2002") {
-        return NextResponse.json(
-          { error: "Dit e-mailadres is al in gebruik." },
-          { status: 409 },
-        );
-      }
+  } catch (error: unknown) {
+    const prismaCode =
+      error instanceof Prisma.PrismaClientKnownRequestError
+        ? error.code
+        : typeof error === "object" &&
+            error !== null &&
+            "code" in error &&
+            typeof (error as { code?: unknown }).code === "string"
+          ? (error as { code: string }).code
+          : null;
+
+    if (prismaCode === "P2002") {
+      return NextResponse.json(
+        { error: "Dit e-mailadres is al in gebruik." },
+        { status: 409 },
+      );
     }
 
     console.error("Register failed:", error);

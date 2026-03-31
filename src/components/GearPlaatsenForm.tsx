@@ -68,12 +68,14 @@ export function GearPlaatsenForm() {
       </div>
 
       <div>
-        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">Locatie</label>
+        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">Adres</label>
         <input
           className="w-full bg-surface-container-high px-4 py-4"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          placeholder="Amsterdam"
+          placeholder="Bijv. Coolsingel 12, Rotterdam"
+          required
+          minLength={6}
         />
       </div>
 

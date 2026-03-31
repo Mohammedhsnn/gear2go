@@ -96,10 +96,19 @@ export default async function DashboardPage() {
     );
   }
 
-  const [myItems, activeRentals, avgReview, unreadNotifications] = await Promise.all([
+  const [myItems, communityItems, activeRentals, avgReview, unreadNotifications] = await Promise.all([
     prisma.item.findMany({
       where: { ownerId: user.id },
       include: { category: true },
+      orderBy: { createdAt: "desc" },
+      take: 4,
+    }),
+    prisma.item.findMany({
+      where: { ownerId: { not: user.id }, status: "PUBLISHED" },
+      include: {
+        category: true,
+        owner: { select: { displayName: true } },
+      },
       orderBy: { createdAt: "desc" },
       take: 4,
     }),
@@ -245,6 +254,64 @@ export default async function DashboardPage() {
                       <p className="text-xs text-on-surface-variant uppercase tracking-widest mb-4">
                         {item.category?.label ?? "Gear"} - {euro(item.pricePerDayCents / 100)} /dag
                       </p>
+                      <Link
+                        href={`/products/${encodeURIComponent(item.id)}`}
+                        className="inline-flex items-center gap-2 border border-primary text-primary px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-primary hover:text-on-primary transition-colors duration-100"
+                      >
+                        Bekijk als klant
+                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                      </Link>
+                    </div>
+                  </article>
+                ))
+              )}
+            </div>
+          </section>
+
+          <section className="mt-16">
+            <div className="flex justify-between items-end mb-8 border-b border-primary/5 pb-4">
+              <h2 className="text-3xl font-black uppercase tracking-tight font-headline">Community Items</h2>
+              <Link className="text-xs font-bold uppercase tracking-widest underline underline-offset-4 hover:text-on-surface-variant" href="/ontdekken">
+                Ontdek meer
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {communityItems.length === 0 ? (
+                <div className="col-span-full bg-surface-container-low p-8">
+                  <p className="uppercase text-xs tracking-widest text-on-surface-variant">
+                    Nog geen community items beschikbaar.
+                  </p>
+                </div>
+              ) : (
+                communityItems.map((item) => (
+                  <article key={item.id} className="bg-surface-container-lowest border border-outline-variant/10 overflow-hidden">
+                    <div className="h-48 bg-surface-container overflow-hidden">
+                      <img
+                        alt={item.title}
+                        className="w-full h-full object-cover grayscale"
+                        src={item.imageUrl || "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=1200&q=80"}
+                      />
+                    </div>
+                    <div className="p-6">
+                      <div className="flex justify-between items-start mb-2 gap-3">
+                        <h3 className="font-bold uppercase tracking-wide text-lg">{item.title}</h3>
+                        <span className="bg-primary text-on-primary text-[10px] font-bold px-2 py-1 uppercase tracking-tighter">
+                          Beschikbaar
+                        </span>
+                      </div>
+                      <p className="text-xs text-on-surface-variant uppercase tracking-widest mb-2">
+                        {item.category?.label ?? "Gear"} - {euro(item.pricePerDayCents / 100)} /dag
+                      </p>
+                      <p className="text-[11px] uppercase tracking-widest text-on-surface-variant mb-4">
+                        Verhuurder: {item.owner.displayName ?? "Community Member"}
+                      </p>
+                      <Link
+                        href={`/products/${encodeURIComponent(item.id)}`}
+                        className="inline-flex items-center gap-2 border border-primary text-primary px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-primary hover:text-on-primary transition-colors duration-100"
+                      >
+                        Bekijk item
+                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                      </Link>
                     </div>
                   </article>
                 ))
