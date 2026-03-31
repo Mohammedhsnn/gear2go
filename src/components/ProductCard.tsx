@@ -1,18 +1,6 @@
 import Link from "next/link";
 import { formatEUR } from "@/data/catalog";
 
-<<<<<<< HEAD
-export type ProductCardData = {
-  id: string;
-  title: string;
-  location: string;
-  pricePerDayCents: number;
-  imageUrl: string;
-  tags?: string[];
-};
-
-export function ProductCard({ product }: { product: ProductCardData }) {
-=======
 export type ProductCardModel = {
   id: string;
   title: string;
@@ -23,7 +11,57 @@ export type ProductCardModel = {
 };
 
 export function ProductCard({ product }: { product: ProductCardModel }) {
->>>>>>> 10de1c1 (fix location and ontdekken page)
+  return (
+    <Link
+      href={`/products/${encodeURIComponent(product.id)}`}
+      className="bg-surface p-6 group cursor-pointer hover:bg-surface-container-highest transition-all duration-300 block"
+    >
+      <div className="aspect-square bg-surface-container-high mb-8 overflow-hidden">
+        <img
+          alt={product.title}
+          className="w-full h-full object-cover grayscale group-hover:scale-110 group-hover:grayscale-0 transition-all duration-500"
+          src={product.imageUrl}
+        />
+      </div>
+      <div className="flex justify-between items-start mb-3 gap-4">
+        <h3 className="font-bold text-xl uppercase leading-tight group-hover:text-primary transition-colors">
+          {product.title}
+        </h3>
+        <span className="font-black text-xl">{formatEUR(product.pricePerDayCents)}</span>
+      </div>
+      <p className="text-on-surface-variant text-xs uppercase tracking-wider font-semibold mb-6">
+        {product.location} • Dagprijs
+      </p>
+      <div className="flex gap-2 flex-wrap">
+        {product.tags.slice(0, 3).map((t) => (
+          <span
+            key={t}
+            className={
+              t === "Premium" || t === "Pro Gear" || t === "Hiking"
+                ? "bg-primary text-on-primary px-3 py-1 text-[10px] font-bold uppercase tracking-tighter"
+                : "bg-surface-container-high px-3 py-1 text-[10px] font-bold uppercase tracking-tighter"
+            }
+          >
+            {t}
+          </span>
+        ))}
+      </div>
+    </Link>
+  );
+}
+import Link from "next/link";
+import { formatEUR } from "@/data/catalog";
+
+export type ProductCardModel = {
+  id: string;
+  title: string;
+  imageUrl: string;
+  pricePerDayCents: number;
+  location: string;
+  tags?: string[];
+};
+
+export function ProductCard({ product }: { product: ProductCardModel }) {
   return (
     <Link
       href={`/products/${encodeURIComponent(product.id)}`}
@@ -62,4 +100,6 @@ export function ProductCard({ product }: { product: ProductCardModel }) {
     </Link>
   );
 }
+
+export type ProductCardData = ProductCardModel;
 

@@ -98,13 +98,11 @@ export async function POST(req: Request) {
   if (!Number.isFinite(pricePerDay) || pricePerDay <= 0) {
     return NextResponse.json({ error: "Prijs per dag moet groter zijn dan 0." }, { status: 400 });
   }
-<<<<<<< HEAD
   if (!categoryId) {
     return NextResponse.json({ error: "Kies een categorie." }, { status: 400 });
-=======
+  }
   if (!location || location.length < 6) {
     return NextResponse.json({ error: "Vul een geldig adres in (minimaal 6 tekens)." }, { status: 400 });
->>>>>>> 10de1c1 (fix location and ontdekken page)
   }
 
   const categoryExists = await prisma.category.findUnique({

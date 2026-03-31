@@ -135,7 +135,9 @@ export function GearPlaatsenForm({ categories }: GearPlaatsenFormProps) {
   return (
     <form onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="md:col-span-2">
-        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">Titel</label>
+        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">
+          Titel
+        </label>
         <input
           className="w-full bg-surface-container-high px-4 py-4"
           value={title}
@@ -147,7 +149,9 @@ export function GearPlaatsenForm({ categories }: GearPlaatsenFormProps) {
       </div>
 
       <div className="md:col-span-2">
-        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">Subtitel</label>
+        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">
+          Subtitel
+        </label>
         <input
           className="w-full bg-surface-container-high px-4 py-4"
           value={subtitle}
@@ -157,7 +161,9 @@ export function GearPlaatsenForm({ categories }: GearPlaatsenFormProps) {
       </div>
 
       <div className="md:col-span-2 bg-surface-container-high p-4 border border-outline-variant/30">
-        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">Categorie (verplicht)</label>
+        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">
+          Categorie (verplicht)
+        </label>
         <select
           className="w-full bg-surface px-4 py-4"
           value={categoryId}
@@ -176,20 +182,20 @@ export function GearPlaatsenForm({ categories }: GearPlaatsenFormProps) {
       </div>
 
       <div>
-        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">Adres</label>
+        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">
+          Adres
+        </label>
         <input
           className="w-full bg-surface-container-high px-4 py-4"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-<<<<<<< HEAD
-          placeholder="Klik op de kaart of vul handmatig in"
-=======
           placeholder="Bijv. Coolsingel 12, Rotterdam"
           required
           minLength={6}
->>>>>>> 10de1c1 (fix location and ontdekken page)
         />
-        {locationLoading ? <p className="mt-2 text-xs text-on-surface-variant">Locaties zoeken...</p> : null}
+        {locationLoading ? (
+          <p className="mt-2 text-xs text-on-surface-variant">Locaties zoeken...</p>
+        ) : null}
         {locationSuggestions.length > 0 ? (
           <div className="mt-2 bg-surface-container-high border border-outline-variant/30 max-h-56 overflow-auto">
             {locationSuggestions.map((suggestion) => (
@@ -207,7 +213,9 @@ export function GearPlaatsenForm({ categories }: GearPlaatsenFormProps) {
       </div>
 
       <div>
-        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">Prijs per dag (EUR)</label>
+        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">
+          Prijs per dag (EUR)
+        </label>
         <input
           className="w-full bg-surface-container-high px-4 py-4"
           value={pricePerDay}
@@ -221,13 +229,19 @@ export function GearPlaatsenForm({ categories }: GearPlaatsenFormProps) {
       </div>
 
       <div className="md:col-span-2">
-        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">Live map locatie</label>
+        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">
+          Live map locatie
+        </label>
         <LocationPickerMap selected={pickedPoint} onPick={onPickMapLocation} />
-        <p className="mt-2 text-xs text-on-surface-variant">Klik op de kaart om je verhuurlocatie te kiezen.</p>
+        <p className="mt-2 text-xs text-on-surface-variant">
+          Klik op de kaart om je verhuurlocatie te kiezen.
+        </p>
       </div>
 
       <div className="md:col-span-2">
-        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">Afbeelding kiezen</label>
+        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">
+          Afbeelding kiezen
+        </label>
         <input
           className="w-full bg-surface-container-high px-4 py-4 file:mr-4 file:border-0 file:bg-primary file:text-on-primary file:px-4 file:py-2 file:font-bold file:uppercase file:tracking-wide file:cursor-pointer"
           type="file"
@@ -239,7 +253,9 @@ export function GearPlaatsenForm({ categories }: GearPlaatsenFormProps) {
       </div>
 
       <div className="md:col-span-2">
-        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">Afbeelding URL (optioneel)</label>
+        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">
+          Afbeelding URL (optioneel)
+        </label>
         <input
           className="w-full bg-surface-container-high px-4 py-4"
           value={imageUrl.startsWith("data:image/") ? "" : imageUrl}
@@ -262,7 +278,9 @@ export function GearPlaatsenForm({ categories }: GearPlaatsenFormProps) {
             className="w-full max-h-80 object-cover bg-surface-container"
           />
           <div className="mt-3 flex items-center justify-between gap-4">
-            <p className="text-xs text-on-surface-variant truncate">{pickedImageName ?? "Afbeelding via URL"}</p>
+            <p className="text-xs text-on-surface-variant truncate">
+              {pickedImageName ?? "Afbeelding via URL"}
+            </p>
             <button
               type="button"
               onClick={clearPickedImage}
@@ -275,7 +293,9 @@ export function GearPlaatsenForm({ categories }: GearPlaatsenFormProps) {
       ) : null}
 
       <div className="md:col-span-2">
-        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">Beschrijving</label>
+        <label className="block text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">
+          Beschrijving
+        </label>
         <textarea
           className="w-full bg-surface-container-high px-4 py-4 min-h-36"
           value={description}
