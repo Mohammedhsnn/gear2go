@@ -6,6 +6,7 @@ import { NavSearchBar } from "@/components/NavSearchBar";
 import { formatEUR, getProductById } from "@/data/catalog";
 import { prisma } from "@/lib/prisma";
 
+<<<<<<< HEAD
 type ProductViewModel = {
   id: string;
   title: string;
@@ -16,6 +17,47 @@ type ProductViewModel = {
   description: string;
   ownerName: string;
 };
+=======
+type ProductDetail = {
+  id: string;
+  title: string;
+  subtitle: string;
+  location: string;
+  pricePerDayCents: number;
+  imageUrl: string;
+  tags: string[];
+  ownerName: string;
+};
+
+async function getProductDetailById(id: string): Promise<ProductDetail | null> {
+  const catalogProduct = getProductById(id);
+  if (catalogProduct) {
+    return {
+      ...catalogProduct,
+      ownerName: "Mark J.",
+    };
+  }
+
+  const item = await prisma.item.findUnique({
+    where: { id },
+    include: { owner: { select: { displayName: true } } },
+  });
+  if (!item || item.status !== "PUBLISHED") return null;
+
+  return {
+    id: item.id,
+    title: item.title,
+    subtitle: item.subtitle?.trim() || "Gear",
+    location: item.location?.trim() || "Nederland",
+    pricePerDayCents: item.pricePerDayCents,
+    imageUrl:
+      item.imageUrl?.trim() ||
+      "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=1200&q=80",
+    tags: ["Community"],
+    ownerName: item.owner.displayName?.trim() || "Verhuurder",
+  };
+}
+>>>>>>> 10de1c1 (fix location and ontdekken page)
 
 export default async function ProductDetailPage({
   params,
@@ -23,6 +65,7 @@ export default async function ProductDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+<<<<<<< HEAD
   const dbItem = await prisma.item.findUnique({
     where: { id },
     include: {
@@ -66,6 +109,14 @@ export default async function ProductDetailPage({
 
   const ownerName = product.ownerName;
   const chatHref = `/berichten?owner=${encodeURIComponent(ownerName)}&product=${encodeURIComponent(product.title)}&itemId=${encodeURIComponent(product.id)}`;
+=======
+  const product = await getProductDetailById(id);
+  if (!product) notFound();
+  const chatHref = `/berichten?owner=${encodeURIComponent(product.ownerName)}&product=${encodeURIComponent(product.title)}&itemId=${encodeURIComponent(product.id)}`;
+  const mapQuery = `${product.location}, Nederland`;
+  const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`;
+  const mapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
+>>>>>>> 10de1c1 (fix location and ontdekken page)
 
   return (
     <div className="min-h-dvh pb-32 md:pb-0">
@@ -145,6 +196,12 @@ export default async function ProductDetailPage({
             <h1 className="text-4xl font-bold tracking-tighter leading-none text-primary uppercase font-headline">
               {product.title}
             </h1>
+            <div className="mt-2 inline-flex w-fit items-center gap-2 bg-surface-container-low px-3 py-2 border border-outline-variant/30">
+              <span className="material-symbols-outlined text-base text-primary">location_on</span>
+              <span className="text-[11px] uppercase tracking-[0.14em] text-on-surface-variant font-label">
+                {product.location}
+              </span>
+            </div>
             <div className="mt-4 flex items-baseline gap-2">
               <span className="text-3xl font-bold text-primary">
                 {formatEUR(product.pricePerDayCents)}
@@ -196,6 +253,12 @@ export default async function ProductDetailPage({
             <h1 className="text-6xl font-black tracking-tight leading-none mb-6 font-headline uppercase">
               {product.title}
             </h1>
+            <div className="mb-6 inline-flex w-fit items-center gap-2 bg-surface-container-low px-4 py-2 border border-outline-variant/30">
+              <span className="material-symbols-outlined text-lg text-primary">location_on</span>
+              <span className="text-[11px] uppercase tracking-[0.16em] text-on-surface-variant font-label">
+                {product.location}
+              </span>
+            </div>
             <div className="flex items-baseline gap-2 mb-10">
               <span className="text-4xl font-bold font-headline">
                 {formatEUR(product.pricePerDayCents)}
@@ -234,7 +297,11 @@ export default async function ProductDetailPage({
                 <div className="flex items-center gap-6">
                   <div className="w-16 h-16 bg-surface-container-highest overflow-hidden" />
                   <div className="flex flex-col">
+<<<<<<< HEAD
                     <span className="text-xl font-bold font-headline">{ownerName}</span>
+=======
+                    <span className="text-xl font-bold font-headline">{product.ownerName}</span>
+>>>>>>> 10de1c1 (fix location and ontdekken page)
                     <div className="flex items-center gap-2 mt-1">
                       <span
                         className="material-symbols-outlined text-sm"
@@ -254,6 +321,28 @@ export default async function ProductDetailPage({
                   >
                     Chat met Verhuurder
                   </Link>
+                </div>
+                <div className="mt-6 rounded-xl border border-outline-variant/30 bg-surface overflow-hidden">
+                  <div className="flex items-center justify-between px-5 py-4 border-b border-outline-variant/20">
+                    <p className="text-[11px] uppercase tracking-[0.16em] text-on-surface-variant font-label">
+                      {product.location}, Nederland
+                    </p>
+                    <a
+                      className="text-[10px] font-label uppercase tracking-widest text-primary hover:opacity-70 transition-opacity"
+                      href={mapLink}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Open Maps
+                    </a>
+                  </div>
+                  <iframe
+                    className="w-full h-72"
+                    src={mapEmbedUrl}
+                    title={`Locatie van ${product.title}`}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
                 </div>
               </section>
 

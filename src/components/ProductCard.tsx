@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { formatEUR } from "@/data/catalog";
 
+<<<<<<< HEAD
 export type ProductCardData = {
   id: string;
   title: string;
@@ -11,6 +12,18 @@ export type ProductCardData = {
 };
 
 export function ProductCard({ product }: { product: ProductCardData }) {
+=======
+export type ProductCardModel = {
+  id: string;
+  title: string;
+  imageUrl: string;
+  pricePerDayCents: number;
+  location: string;
+  tags: string[];
+};
+
+export function ProductCard({ product }: { product: ProductCardModel }) {
+>>>>>>> 10de1c1 (fix location and ontdekken page)
   return (
     <Link
       href={`/products/${encodeURIComponent(product.id)}`}
