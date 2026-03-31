@@ -11,6 +11,32 @@ npm run dev
 
 Open `http://localhost:3000`.
 
+### E-mail verificatie instellen
+
+Voorkeur: gebruik Brevo API (makkelijkste setup):
+
+```bash
+APP_BASE_URL="http://localhost:3000"
+BREVO_API_KEY="xkeysib-..."
+BREVO_SENDER="Gear2Go <no-reply@jouwdomein.nl>"
+```
+
+Fallback: je kunt ook SMTP gebruiken:
+
+```bash
+APP_BASE_URL="http://localhost:3000"
+SMTP_HOST="smtp.jouwdomein.nl"
+SMTP_PORT="587"
+SMTP_SECURE="false"
+SMTP_USER="jouw-smtp-user"
+SMTP_PASS="jouw-smtp-wachtwoord"
+SMTP_FROM="Gear2Go <no-reply@jouwdomein.nl>"
+```
+
+Flow:
+- Registreren stuurt een bevestigingsmail met verificatielink.
+- Inloggen is geblokkeerd totdat e-mail is bevestigd.
+
 ### Routes
 
 - **`/`**: home

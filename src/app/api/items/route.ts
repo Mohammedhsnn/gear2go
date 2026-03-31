@@ -44,6 +44,7 @@ export async function POST(req: Request) {
         subtitle?: string | null;
         description?: string | null;
         location?: string | null;
+        categoryId?: string;
         imageUrl?: string | null;
         pricePerDay?: number;
       }
@@ -53,6 +54,7 @@ export async function POST(req: Request) {
   const subtitle = body?.subtitle?.trim() || null;
   const description = body?.description?.trim() || null;
   const location = body?.location?.trim() || null;
+  const categoryId = body?.categoryId?.trim() || "";
   const imageUrl = body?.imageUrl?.trim() || null;
   const pricePerDay = Number(body?.pricePerDay ?? 0);
 
@@ -62,11 +64,17 @@ export async function POST(req: Request) {
   if (!Number.isFinite(pricePerDay) || pricePerDay <= 0) {
     return NextResponse.json({ error: "Prijs per dag moet groter zijn dan 0." }, { status: 400 });
   }
+  if (!categoryId) {
+    return NextResponse.json({ error: "Kies een categorie." }, { status: 400 });
+  }
 
-  const fallbackCategory = await prisma.category.findFirst({
-    orderBy: { sortOrder: "asc" },
+  const categoryExists = await prisma.category.findUnique({
+    where: { id: categoryId },
     select: { id: true },
   });
+  if (!categoryExists) {
+    return NextResponse.json({ error: "Ongeldige categorie." }, { status: 400 });
+  }
 
   const item = await prisma.item.create({
     data: {
@@ -76,9 +84,9 @@ export async function POST(req: Request) {
       description,
       location,
       imageUrl,
+      categoryId,
       pricePerDayCents: Math.round(pricePerDay * 100),
       status: "PUBLISHED",
-      ...(fallbackCategory ? { categoryId: fallbackCategory.id } : {}),
     },
     select: {
       id: true,

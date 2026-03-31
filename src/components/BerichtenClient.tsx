@@ -81,12 +81,54 @@ export default function BerichtenClient({
 
   // Load or create conversation once we have current user
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser || !itemId) return;
 
     const loadConversation = async () => {
       try {
-        // For now, we'll just load them from the page params
-        // In a real app, you'd get the other user ID from the params or URL
+        // Fetch the item to get the owner's ID
+        const itemRes = await fetch(`/api/items/${itemId}`);
+        if (!itemRes.ok) {
+          setMessageError("Item niet gevonden.");
+          setLoading(false);
+          return;
+        }
+
+        const item = await itemRes.json() as { id: string; owner: { id: string; displayName: string | null; avatarUrl: string | null } };
+        const otherUserId = item.owner.id;
+
+        // Don't allow conversation with self
+        if (otherUserId === currentUser.id) {
+          setMessageError("Je kunt geen gesprek met jezelf starten.");
+          setLoading(false);
+          return;
+        }
+
+        // Create or get conversation
+        const convRes = await fetch("/api/conversations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            otherUserId,
+            itemId,
+          }),
+        });
+
+        if (!convRes.ok) {
+          setMessageError("Kon gesprek niet laden. Probeer opnieuw.");
+          setLoading(false);
+          return;
+        }
+
+        const conv = await convRes.json() as Conversation;
+        setConversation(conv);
+
+        // Load messages for this conversation
+        const messagesRes = await fetch(`/api/messages?conversationId=${conv.id}`);
+        if (messagesRes.ok) {
+          const msgs = await messagesRes.json() as Message[];
+          setMessages(msgs);
+        }
+
         setLoading(false);
       } catch (error) {
         console.error("Failed to load conversation:", error);
@@ -96,7 +138,7 @@ export default function BerichtenClient({
     };
 
     loadConversation();
-  }, [currentUser]);
+  }, [currentUser, itemId]);
 
   const sendMessage = async () => {
     const text = input.trim();
@@ -194,6 +236,28 @@ export default function BerichtenClient({
     }
   };
 
+  if (!currentUser) {
+    return (
+      <div className="flex items-center justify-center h-full flex-col gap-4">
+        <span className="text-on-surface-variant">Je moet ingelogd zijn om te chatten.</span>
+        <Link href="/register" className="bg-primary text-on-primary px-6 py-3 font-label text-xs uppercase tracking-widest">
+          Inloggen
+        </Link>
+      </div>
+    );
+  }
+
+  if (!itemId) {
+    return (
+      <div className="flex items-center justify-center h-full flex-col gap-4">
+        <span className="text-on-surface-variant">Geen gesprek geselecteerd. Open een chat via een product.</span>
+        <Link href="/ontdekken" className="bg-primary text-on-primary px-6 py-3 font-label text-xs uppercase tracking-widest">
+          Terug naar producten
+        </Link>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -202,12 +266,12 @@ export default function BerichtenClient({
     );
   }
 
-  if (!currentUser) {
+  if (messageError && !conversation) {
     return (
       <div className="flex items-center justify-center h-full flex-col gap-4">
-        <span className="text-on-surface-variant">Je moet ingelogd zijn om te chatten.</span>
-        <Link href="/register" className="bg-primary text-on-primary px-6 py-3 font-label text-xs uppercase tracking-widest">
-          Inloggen
+        <span className="text-on-surface-variant">{messageError}</span>
+        <Link href="/ontdekken" className="bg-primary text-on-primary px-6 py-3 font-label text-xs uppercase tracking-widest">
+          Terug naar producten
         </Link>
       </div>
     );
@@ -222,7 +286,7 @@ export default function BerichtenClient({
   }
 
   return (
-    <div className="bg-surface text-on-surface overflow-hidden min-h-screen">
+    <div className="bg-surface text-on-surface min-h-screen overflow-y-scroll">
       <nav className="fixed top-0 z-50 w-full flex justify-between items-center px-6 md:px-12 py-6 bg-surface bg-opacity-80 backdrop-blur-md">
         <Link href="/" className="text-3xl font-black tracking-tighter text-primary font-headline uppercase">
           GEAR2GO
@@ -336,7 +400,7 @@ export default function BerichtenClient({
               {messages.length === 0 ? (
                 <div className="flex items-center justify-center h-full">
                   <span className="text-on-surface-variant text-sm">
-                    Nog geen berichten. Start het gesprek!
+                    Begin een gesprek
                   </span>
                 </div>
               ) : (

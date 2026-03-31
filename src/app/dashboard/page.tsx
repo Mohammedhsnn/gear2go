@@ -96,14 +96,35 @@ export default async function DashboardPage() {
     );
   }
 
-  const [myItems, activeRentals, avgReview, unreadNotifications] = await Promise.all([
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+  const [myItems, activeRentals, monthlyIncomeAgg, avgReview, unreadNotifications] = await Promise.all([
     prisma.item.findMany({
       where: { ownerId: user.id },
       include: { category: true },
       orderBy: { createdAt: "desc" },
-      take: 4,
     }),
-    prisma.item.count({ where: { ownerId: user.id, status: "PUBLISHED" } }),
+    prisma.booking.count({
+      where: {
+        ownerId: user.id,
+        status: "CONFIRMED",
+        startDate: { lte: now },
+        endDate: { gte: now },
+      },
+    }),
+    prisma.booking.aggregate({
+      where: {
+        ownerId: user.id,
+        status: "CONFIRMED",
+        createdAt: {
+          gte: monthStart,
+          lt: nextMonthStart,
+        },
+      },
+      _sum: { totalCents: true },
+    }),
     prisma.review.aggregate({
       where: { item: { ownerId: user.id } },
       _avg: { rating: true },
@@ -111,8 +132,7 @@ export default async function DashboardPage() {
     prisma.notification.count({ where: { userId: user.id, readAt: null } }),
   ]);
 
-  const monthlyIncome =
-    myItems.filter((x) => x.status === "PUBLISHED").reduce((sum, i) => sum + i.pricePerDayCents / 100, 0) * 10;
+  const monthlyIncome = (monthlyIncomeAgg._sum.totalCents ?? 0) / 100;
   const rating = (avgReview._avg.rating ?? 0).toFixed(1);
 
   return (
@@ -165,14 +185,14 @@ export default async function DashboardPage() {
               <span className="material-symbols-outlined">dashboard</span>
               Overview
             </Link>
-            <span className="text-on-surface-variant px-4 py-3 flex items-center gap-3 font-headline font-bold uppercase text-xs tracking-wider">
+            <Link className="text-on-surface-variant px-4 py-3 flex items-center gap-3 font-headline font-bold uppercase text-xs tracking-wider hover:text-primary transition-colors" href="/dashboard#my-gear">
               <span className="material-symbols-outlined">sports_kabaddi</span>
               My Gear
-            </span>
-            <span className="text-on-surface-variant px-4 py-3 flex items-center gap-3 font-headline font-bold uppercase text-xs tracking-wider">
+            </Link>
+            <Link className="text-on-surface-variant px-4 py-3 flex items-center gap-3 font-headline font-bold uppercase text-xs tracking-wider hover:text-primary transition-colors" href="/dashboard#rentals">
               <span className="material-symbols-outlined">swap_horiz</span>
               Rentals
-            </span>
+            </Link>
           </nav>
         </aside>
 
@@ -213,7 +233,7 @@ export default async function DashboardPage() {
             </div>
           </section>
 
-          <section>
+          <section id="my-gear" className="scroll-mt-28">
             <div className="flex justify-between items-end mb-8 border-b border-primary/5 pb-4">
               <h2 className="text-3xl font-black uppercase tracking-tight font-headline">Mijn Items</h2>
               <Link className="text-xs font-bold uppercase tracking-widest underline underline-offset-4 hover:text-on-surface-variant" href="/ontdekken">
@@ -228,16 +248,18 @@ export default async function DashboardPage() {
               ) : (
                 myItems.map((item) => (
                   <article key={item.id} className="bg-surface-container-lowest border border-outline-variant/10 overflow-hidden">
-                    <div className="h-48 bg-surface-container overflow-hidden">
+                    <Link href={`/dashboard/items/${encodeURIComponent(item.id)}`} className="block h-48 bg-surface-container overflow-hidden">
                       <img
                         alt={item.title}
                         className="w-full h-full object-cover grayscale"
                         src={item.imageUrl || "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=1200&q=80"}
                       />
-                    </div>
+                    </Link>
                     <div className="p-6">
                       <div className="flex justify-between items-start mb-2 gap-3">
-                        <h3 className="font-bold uppercase tracking-wide text-lg">{item.title}</h3>
+                        <Link href={`/dashboard/items/${encodeURIComponent(item.id)}`} className="font-bold uppercase tracking-wide text-lg hover:text-primary transition-colors">
+                          {item.title}
+                        </Link>
                         <span className="bg-primary text-on-primary text-[10px] font-bold px-2 py-1 uppercase tracking-tighter">
                           {item.status === "PUBLISHED" ? "Beschikbaar" : "Concept"}
                         </span>
@@ -245,6 +267,12 @@ export default async function DashboardPage() {
                       <p className="text-xs text-on-surface-variant uppercase tracking-widest mb-4">
                         {item.category?.label ?? "Gear"} - {euro(item.pricePerDayCents / 100)} /dag
                       </p>
+                      <Link
+                        href={`/dashboard/items/${encodeURIComponent(item.id)}`}
+                        className="text-xs font-bold uppercase tracking-widest underline underline-offset-4 hover:text-primary transition-colors"
+                      >
+                        Bewerken
+                      </Link>
                     </div>
                   </article>
                 ))
@@ -252,7 +280,9 @@ export default async function DashboardPage() {
             </div>
           </section>
 
-          <BookingPlanningPanel />
+          <div id="rentals" className="scroll-mt-28">
+            <BookingPlanningPanel />
+          </div>
         </main>
       </div>
     </div>

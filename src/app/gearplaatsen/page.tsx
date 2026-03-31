@@ -3,13 +3,41 @@ import { redirect } from "next/navigation";
 import { GearPlaatsenForm } from "@/components/GearPlaatsenForm";
 import { NavSearchBar } from "@/components/NavSearchBar";
 import { getCurrentUser } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
+
+const DEFAULT_CATEGORIES = [
+  { slug: "watersport", label: "Watersporten", sortOrder: 10 },
+  { slug: "wintersport", label: "Wintersporten", sortOrder: 20 },
+  { slug: "bikes", label: "Bikes & MTB", sortOrder: 30 },
+  { slug: "camping", label: "Camping", sortOrder: 40 },
+  { slug: "camera", label: "Camera", sortOrder: 50 },
+  { slug: "climbing", label: "Klimsport", sortOrder: 60 },
+  { slug: "audio", label: "Audio & Muziek", sortOrder: 70 },
+];
 
 export default async function GearPlaatsenPage() {
   const user = await getCurrentUser();
   if (!user) {
     redirect("/register?next=/gearplaatsen");
+  }
+
+  let categories = await prisma.category.findMany({
+    orderBy: [{ sortOrder: "asc" }, { label: "asc" }],
+    select: { id: true, label: true },
+  });
+
+  if (categories.length === 0) {
+    await prisma.category.createMany({
+      data: DEFAULT_CATEGORIES,
+      skipDuplicates: true,
+    });
+
+    categories = await prisma.category.findMany({
+      orderBy: [{ sortOrder: "asc" }, { label: "asc" }],
+      select: { id: true, label: true },
+    });
   }
 
   return (
@@ -41,7 +69,7 @@ export default async function GearPlaatsenPage() {
         </p>
 
         <div className="bg-surface-container-low p-6 md:p-10">
-          <GearPlaatsenForm />
+          <GearPlaatsenForm categories={categories} />
         </div>
       </section>
     </main>

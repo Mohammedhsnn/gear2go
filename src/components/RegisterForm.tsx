@@ -13,6 +13,8 @@ export function RegisterForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [verificationUrl, setVerificationUrl] = useState<string | null>(null);
 
   return (
     <form
@@ -20,6 +22,8 @@ export function RegisterForm() {
       onSubmit={async (e) => {
         e.preventDefault();
         setError(null);
+        setSuccess(null);
+        setVerificationUrl(null);
 
         if (password !== confirmPassword) {
           setError("Wachtwoorden komen niet overeen.");
@@ -37,16 +41,25 @@ export function RegisterForm() {
               displayName: displayName.trim() || null,
             }),
           });
-          const data = (await res.json().catch(() => ({}))) as { error?: string };
+          const data = (await res.json().catch(() => ({}))) as {
+            error?: string;
+            message?: string;
+            verificationUrl?: string | null;
+          };
           if (!res.ok) {
             setError(data.error || "Registratie mislukt.");
             return;
           }
 
+          setSuccess(data.message || "Controleer je e-mail en bevestig je account voordat je inlogt.");
+          if (data.verificationUrl) {
+            setVerificationUrl(data.verificationUrl);
+          }
+          setPassword("");
+          setConfirmPassword("");
           const next = searchParams.get("next");
           const safeNext = next && next.startsWith("/") ? next : "/dashboard";
-          router.push(safeNext);
-          router.refresh();
+          router.prefetch(safeNext);
         } finally {
           setLoading(false);
         }
@@ -120,6 +133,13 @@ export function RegisterForm() {
       </div>
 
       {error ? <p className="text-xs text-error">{error}</p> : null}
+      {success ? <p className="text-xs text-primary font-semibold">{success}</p> : null}
+      {verificationUrl ? (
+        <div className="text-xs text-on-surface-variant bg-surface-container-high p-3 border border-outline-variant/30">
+          <p className="font-semibold mb-1">Verificatielink (tijdelijk):</p>
+          <a className="text-primary underline break-all" href={verificationUrl}>{verificationUrl}</a>
+        </div>
+      ) : null}
 
       <button
         className="w-full bg-primary text-on-primary py-5 font-bold uppercase tracking-widest hover:bg-surface-dim hover:text-primary transition-all duration-100 active:scale-95 disabled:opacity-50"

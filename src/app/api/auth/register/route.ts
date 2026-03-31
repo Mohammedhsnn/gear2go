@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { Prisma } from "@/generated/prisma";
-import { hashPassword, createSession } from "@/lib/auth";
+import { hashPassword } from "@/lib/auth";
+import { isEmailDeliveryConfigured } from "@/lib/email";
+import { issueEmailVerification } from "@/lib/emailVerification";
 import { prisma } from "@/lib/prisma";
+
+type BasicUser = { id: string; email: string; displayName: string | null; createdAt: Date };
 
 export async function POST(req: Request) {
   try {
@@ -20,8 +24,48 @@ export async function POST(req: Request) {
       );
     }
 
+    const existing = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true, email: true, displayName: true, createdAt: true, emailVerifiedAt: true },
+    });
+
+    if (existing) {
+      if (existing.emailVerifiedAt) {
+        return NextResponse.json(
+          { error: "Dit e-mailadres is al in gebruik." },
+          { status: 409 },
+        );
+      }
+
+      const result = await issueEmailVerification(existing, { cooldownSeconds: 60 });
+
+      if (result.retryAfterSeconds) {
+        return NextResponse.json(
+          {
+            error: `Wacht ${result.retryAfterSeconds}s voordat je opnieuw probeert.`,
+            retryAfterSeconds: result.retryAfterSeconds,
+          },
+          { status: 429 },
+        );
+      }
+
+      return NextResponse.json({
+        user: {
+          id: existing.id,
+          email: existing.email,
+          displayName: existing.displayName,
+          createdAt: existing.createdAt,
+        },
+        requiresEmailVerification: true,
+        message: isEmailDeliveryConfigured()
+          ? "Je account bestaat al. We hebben opnieuw een verificatiemail gestuurd."
+          : "Mailserver niet ingesteld in dev. Gebruik de link hieronder om te bevestigen.",
+        verificationUrl: result.verificationUrl ?? null,
+      });
+    }
+
     const passwordHash = await hashPassword(password);
-    let user: { id: string; email: string; displayName: string | null; createdAt: Date };
+    let user: BasicUser;
     try {
       user = await prisma.user.create({
         data: {
@@ -47,15 +91,27 @@ export async function POST(req: Request) {
       throw error;
     }
 
-    try {
-      await createSession(user.id);
-    } catch (error) {
-      console.error("Register failed during createSession:", error);
-      throw error;
+    const result = await issueEmailVerification(user, { cooldownSeconds: 0 });
+
+    return NextResponse.json({
+      user,
+      requiresEmailVerification: true,
+      message: isEmailDeliveryConfigured()
+        ? "Controleer je e-mail en bevestig je account voordat je inlogt."
+        : "Mailserver niet ingesteld in dev. Gebruik de link hieronder om te bevestigen.",
+      verificationUrl: result.verificationUrl ?? null,
+    });
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      ["EMAIL_DELIVERY_NOT_CONFIGURED", "BREVO_SENDER_NOT_CONFIGURED", "BREVO_SENDER_NOT_VERIFIED"].includes(error.message)
+    ) {
+      return NextResponse.json(
+        { error: "E-mailservice is nog niet correct geconfigureerd. Stel een verified BREVO_SENDER in .env in." },
+        { status: 500 },
+      );
     }
 
-    return NextResponse.json({ user });
-  } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
         return NextResponse.json(

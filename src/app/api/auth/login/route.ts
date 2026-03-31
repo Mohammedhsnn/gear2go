@@ -19,6 +19,16 @@ export async function POST(req: Request) {
   const ok = await verifyPassword(user.passwordHash, password);
   if (!ok) return NextResponse.json({ error: "Invalid credentials." }, { status: 401 });
 
+  if (!user.emailVerifiedAt) {
+    return NextResponse.json(
+      {
+        error: "Bevestig eerst je e-mailadres via de link in je mailbox.",
+        code: "EMAIL_NOT_VERIFIED",
+      },
+      { status: 403 },
+    );
+  }
+
   await createSession(user.id);
   return NextResponse.json({
     user: { id: user.id, email: user.email, displayName: user.displayName },

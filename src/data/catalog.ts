@@ -1,11 +1,10 @@
 export type CategoryId =
-  | "watersport"
+  | "watersporten"
   | "wintersport"
-  | "bikes"
-  | "camping"
-  | "camera"
-  | "climbing"
-  | "audio";
+  | "fietssporten"
+  | "balsporten"
+  | "overige_sporten"
+  | "transport_baggage";
 
 export type Product = {
   id: string;
@@ -20,13 +19,12 @@ export type Product = {
 };
 
 export const categories: { id: CategoryId; label: string }[] = [
-  { id: "watersport", label: "Watersporten" },
-  { id: "wintersport", label: "Wintersporten" },
-  { id: "bikes", label: "Bikes & MTB" },
-  { id: "camping", label: "Camping" },
-  { id: "camera", label: "Camera" },
-  { id: "climbing", label: "Klimsport" },
-  { id: "audio", label: "Audio & Muziek" },
+  { id: "watersporten", label: "Watersporten" },
+  { id: "wintersport", label: "Wintersport" },
+  { id: "fietssporten", label: "Fietssporten" },
+  { id: "balsporten", label: "Balsporten" },
+  { id: "overige_sporten", label: "Overige Sporten" },
+  { id: "transport_baggage", label: "Transport & Baggage" },
 ];
 
 // NOTE: Proof-case catalog. Replace with API later.
@@ -35,7 +33,7 @@ export const products: Product[] = [
     id: "trek-fuel-ex-98",
     title: "Trek Fuel EX 9.8",
     subtitle: "Mountainbike / Trail",
-    categoryId: "bikes",
+    categoryId: "fietssporten",
     location: "Amsterdam",
     pricePerDayCents: 4500,
     depositCents: 15000,
@@ -47,7 +45,7 @@ export const products: Product[] = [
     id: "specialized-enduro-mtb",
     title: "Specialized Enduro MTB",
     subtitle: "High-end Enduro",
-    categoryId: "bikes",
+    categoryId: "fietssporten",
     location: "Amsterdam",
     pricePerDayCents: 4500,
     depositCents: 15000,
@@ -59,7 +57,7 @@ export const products: Product[] = [
     id: "expedition-tent",
     title: "Expedition Tent",
     subtitle: "Outdoor Essentials",
-    categoryId: "camping",
+    categoryId: "overige_sporten",
     location: "Eindhoven",
     pricePerDayCents: 2500,
     depositCents: 10000,
@@ -71,7 +69,7 @@ export const products: Product[] = [
     id: "sea-kayak-pro2",
     title: "Sea Kayak Pro-2",
     subtitle: "Watersport",
-    categoryId: "watersport",
+    categoryId: "watersporten",
     location: "Rotterdam",
     pricePerDayCents: 5500,
     depositCents: 20000,
@@ -95,7 +93,7 @@ export const products: Product[] = [
     id: "petzl-climb-kit-pro",
     title: "Petzl Climb Kit Pro",
     subtitle: "Klimset",
-    categoryId: "climbing",
+    categoryId: "overige_sporten",
     location: "Arnhem",
     pricePerDayCents: 2800,
     depositCents: 9000,
@@ -107,7 +105,7 @@ export const products: Product[] = [
     id: "roland-go-keys-studio",
     title: "Roland GO:KEYS Studio",
     subtitle: "Synth / Keys",
-    categoryId: "audio",
+    categoryId: "overige_sporten",
     location: "Rotterdam",
     pricePerDayCents: 3200,
     depositCents: 11000,
