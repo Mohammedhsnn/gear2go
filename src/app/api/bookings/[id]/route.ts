@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
+import { createNotificationIfAllowed } from "@/lib/notifications";
 import { prisma } from "@/lib/prisma";
 
 export async function PATCH(
@@ -48,17 +49,15 @@ export async function PATCH(
     },
   });
 
-  await prisma.notification.create({
-    data: {
-      userId: booking.renterId,
-      type: "ITEM",
-      title: decision === "accept" ? "Boeking bevestigd" : "Boeking geweigerd",
-      body:
-        decision === "accept"
-          ? `Je aanvraag voor ${booking.item.title} is bevestigd.`
-          : `Je aanvraag voor ${booking.item.title} is geweigerd.`,
-      data: { bookingId: booking.id, status: updated.status },
-    },
+  await createNotificationIfAllowed({
+    userId: booking.renterId,
+    type: "ITEM",
+    title: decision === "accept" ? "Boeking bevestigd" : "Boeking geweigerd",
+    body:
+      decision === "accept"
+        ? `Je aanvraag voor ${booking.item.title} is bevestigd.`
+        : `Je aanvraag voor ${booking.item.title} is geweigerd.`,
+    data: { bookingId: booking.id, status: updated.status },
   });
 
   return NextResponse.json({ booking: updated });

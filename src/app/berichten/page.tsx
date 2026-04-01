@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import BerichtenClient from "@/components/BerichtenClient";
+import { NavSearchBar } from "@/components/NavSearchBar";
 import { getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -8,7 +9,7 @@ export const dynamic = "force-dynamic";
 export default async function BerichtenPage({
   searchParams,
 }: {
-  searchParams: Promise<{ owner?: string; product?: string; itemId?: string }>;
+  searchParams: Promise<{ owner?: string; product?: string; itemId?: string; conversationId?: string }>;
 }) {
   const user = await getCurrentUser();
 
@@ -16,6 +17,7 @@ export default async function BerichtenPage({
   const ownerName = params.owner?.trim() || "Thomas V.";
   const productTitle = params.product?.trim() || "Specialized Stumpjumper";
   const itemId = params.itemId?.trim() || "";
+  const conversationId = params.conversationId?.trim() || "";
 
   return (
     <div className="bg-surface text-on-surface min-h-screen flex flex-col">
@@ -37,6 +39,7 @@ export default async function BerichtenPage({
           <Link className="font-headline tracking-tight uppercase text-sm font-bold text-primary border-b-4 border-primary pb-1" href="/berichten">
             BERICHTEN
           </Link>
+          <NavSearchBar />
         </div>
         <div className="flex items-center gap-6">
           <Link className="font-headline tracking-tight uppercase text-sm font-bold bg-primary text-on-primary px-6 py-3 hover:bg-surface-dim hover:text-primary transition-colors duration-100 hidden md:inline-flex" href="/gearplaatsen">
@@ -101,6 +104,7 @@ export default async function BerichtenPage({
               ownerName={ownerName}
               productTitle={productTitle}
               itemId={itemId}
+              conversationId={conversationId}
             />
           </Suspense>
         )}

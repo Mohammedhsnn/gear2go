@@ -40,6 +40,14 @@ export async function GET(req: NextRequest) {
             id: true,
             title: true,
             imageUrl: true,
+            pricePerDayCents: true,
+            ownerId: true,
+          },
+        },
+        booking: {
+          select: {
+            id: true,
+            status: true,
           },
         },
         messages: {
@@ -55,7 +63,28 @@ export async function GET(req: NextRequest) {
       orderBy: { updatedAt: "desc" },
     });
 
-    return NextResponse.json(conversations);
+    const unreadCounts = await Promise.all(
+      conversations.map(async (conversation) => {
+        const unreadCount = await prisma.message.count({
+          where: {
+            conversationId: conversation.id,
+            readAt: null,
+            authorId: { not: user.id },
+          },
+        });
+
+        return { id: conversation.id, unreadCount };
+      }),
+    );
+
+    const unreadMap = new Map(unreadCounts.map((x) => [x.id, x.unreadCount]));
+
+    return NextResponse.json(
+      conversations.map((conversation) => ({
+        ...conversation,
+        unreadCount: unreadMap.get(conversation.id) ?? 0,
+      })),
+    );
   } catch (error) {
     console.error("Failed to get conversations:", error);
     return NextResponse.json(

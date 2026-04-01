@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { BottomNav } from "@/components/BottomNav";
+import { FavoriteToggleButton } from "@/components/FavoriteToggleButton";
 import { NavSearchBar } from "@/components/NavSearchBar";
 import { formatEUR, getProductById } from "@/data/catalog";
 import { prisma } from "@/lib/prisma";
@@ -66,6 +67,22 @@ export default async function ProductDetailPage({
   return (
     <div className="min-h-dvh pb-32 md:pb-0">
       <header className="fixed top-0 z-[60] w-full bg-surface bg-opacity-80 backdrop-blur-md">
+        <div className="md:hidden flex justify-between items-center w-full px-6 py-4">
+          <div className="flex items-center gap-4">
+            <Link className="flex items-center" href="/ontdekken">
+              <span className="material-symbols-outlined text-primary">arrow_back</span>
+            </Link>
+            <span className="text-xl font-bold tracking-tighter text-primary uppercase font-headline">
+              GEAR_RENTAL
+            </span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="material-symbols-outlined text-primary cursor-pointer">
+              share
+            </span>
+            <FavoriteToggleButton itemId={product.id} className="text-primary cursor-pointer" />
+          </div>
+        </div>
         <div className="hidden md:flex justify-between items-center px-6 md:px-12 py-6">
           <Link className="text-3xl font-black tracking-tighter text-primary font-headline uppercase" href="/">
             GEAR2GO

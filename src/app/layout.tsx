@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/state/cart";
+import { GlobalNotificationBell } from "@/components/GlobalNotificationBell";
 
 const inter = Inter({ variable: "--font-body", subsets: ["latin"] });
 const spaceGrotesk = Space_Grotesk({
@@ -28,7 +29,10 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning className={`${inter.variable} ${spaceGrotesk.variable}`}>
-        <CartProvider>{children}</CartProvider>
+        <CartProvider>
+          {children}
+          <GlobalNotificationBell />
+        </CartProvider>
       </body>
     </html>
   );

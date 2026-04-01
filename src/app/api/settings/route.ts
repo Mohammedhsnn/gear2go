@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
+import { resolveAddressToPoint } from "@/lib/location";
 import { prisma } from "@/lib/prisma";
 import * as fs from "fs";
 import * as path from "path";
@@ -24,6 +25,9 @@ export async function GET(req: Request) {
       email: true,
       displayName: true,
       avatarUrl: true,
+      homeAddress: true,
+      homeLat: true,
+      homeLng: true,
     },
   });
 
@@ -40,6 +44,9 @@ export async function PUT(req: Request) {
     displayName?: string;
     avatarUrl?: string;
     avatarBase64?: string;
+    homeAddress?: string;
+    homeLat?: number | null;
+    homeLng?: number | null;
   } | null;
 
   if (!body) {
@@ -48,9 +55,34 @@ export async function PUT(req: Request) {
 
   const displayName = body.displayName?.trim() || null;
   let avatarUrl = body.avatarUrl?.trim() || null;
+  const homeAddress = body.homeAddress?.trim() || "";
+  const providedHomeLat = typeof body.homeLat === "number" ? body.homeLat : null;
+  const providedHomeLng = typeof body.homeLng === "number" ? body.homeLng : null;
+
+  let homeLat = Number.isFinite(providedHomeLat) ? providedHomeLat : null;
+  let homeLng = Number.isFinite(providedHomeLng) ? providedHomeLng : null;
 
   if (displayName && displayName.length < 2) {
     return NextResponse.json({ error: "Naam moet minimaal 2 tekens zijn" }, { status: 400 });
+  }
+
+  if (!homeAddress) {
+    return NextResponse.json({ error: "Thuislocatie is verplicht" }, { status: 400 });
+  }
+
+  if (homeLat == null || homeLng == null) {
+    const resolved = await resolveAddressToPoint(homeAddress);
+    if (resolved) {
+      homeLat = resolved.lat;
+      homeLng = resolved.lng;
+    }
+  }
+
+  if (homeLat == null || homeLng == null) {
+    return NextResponse.json(
+      { error: "Voer een geldige locatie in en kies een suggestie." },
+      { status: 400 },
+    );
   }
 
   // Handle base64 avatar upload
@@ -96,12 +128,18 @@ export async function PUT(req: Request) {
       data: {
         ...(displayName !== undefined && { displayName }),
         ...(avatarUrl !== undefined && { avatarUrl }),
+        homeAddress,
+        homeLat,
+        homeLng,
       },
       select: {
         id: true,
         email: true,
         displayName: true,
         avatarUrl: true,
+        homeAddress: true,
+        homeLat: true,
+        homeLng: true,
       },
     });
 

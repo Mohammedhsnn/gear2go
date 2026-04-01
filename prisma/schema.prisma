@@ -46,12 +46,16 @@ model User {
 
   displayName     String?
   avatarUrl       String?
+  homeAddress     String?
+  homeLat         Float?
+  homeLng         Float?
 
   sessions        Session[]
   verification    VerificationToken[]
   privacy         PrivacySettings?
 
   items           Item[]   @relation("OwnerItems")
+  favorites       Favorite[]
   bookingsRented  Booking[] @relation("RenterBookings")
   bookingsOwned   Booking[] @relation("OwnerBookings")
   reviewsAuthored Review[] @relation("ReviewsAuthored")
@@ -62,6 +66,8 @@ model User {
   conversationsInitiated Conversation[] @relation("UserOne")
   conversationsParticipated Conversation[] @relation("UserTwo")
   messages Message[] @relation("MessageAuthor")
+
+  @@index([homeLat, homeLng])
 }
 
 model Session {
@@ -145,12 +151,28 @@ model Item {
   owner            User       @relation("OwnerItems", fields: [ownerId], references: [id], onDelete: Cascade)
 
   bookings         Booking[]
+  favorites        Favorite[]
   reviews          Review[]
   conversations    Conversation[]
 
   @@index([ownerId])
   @@index([categoryId])
   @@index([status])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  itemId    String
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, itemId])
+  @@index([itemId])
+  @@index([userId, createdAt])
 }
 
 model Booking {

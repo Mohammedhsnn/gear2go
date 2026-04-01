@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import * as fs from "fs";
+import * as path from "path";
 import { getCurrentUser } from "@/lib/auth";
+import { createNotificationIfAllowed } from "@/lib/notifications";
 import { prisma } from "@/lib/prisma";
+
+const UPLOAD_DIR = path.join(process.cwd(), "public/uploads");
+
+if (!fs.existsSync(UPLOAD_DIR)) {
+  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,9 +18,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { conversationId, text } = await req.json();
+    const { conversationId, text, imageBase64 } = await req.json();
 
-    if (!conversationId || !text?.trim()) {
+    const trimmedText = typeof text === "string" ? text.trim() : "";
+    const hasImage = typeof imageBase64 === "string" && imageBase64.startsWith("data:image/");
+
+    if (!conversationId || (!trimmedText && !hasImage)) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -37,10 +49,33 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    let composedText = trimmedText;
+
+    if (hasImage) {
+      try {
+        const base64Data = imageBase64.replace(/^data:image\/[^;]+;base64,/, "");
+        const buffer = Buffer.from(base64Data, "base64");
+
+        if (buffer.length > 8 * 1024 * 1024) {
+          return NextResponse.json({ error: "Afbeelding te groot (max 8MB)." }, { status: 400 });
+        }
+
+        const filename = `chat-${conversationId}-${Date.now()}.jpg`;
+        const filepath = path.join(UPLOAD_DIR, filename);
+        fs.writeFileSync(filepath, buffer);
+
+        const imageUrl = `/uploads/${filename}`;
+        const encodedCaption = encodeURIComponent(trimmedText || "");
+        composedText = `__IMG__|url=${imageUrl}|caption=${encodedCaption}`;
+      } catch {
+        return NextResponse.json({ error: "Afbeelding kon niet worden opgeslagen." }, { status: 500 });
+      }
+    }
+
     // Create message
     const message = await prisma.message.create({
       data: {
-        text: text.trim(),
+        text: composedText,
         authorId: user.id,
         conversationId,
       },
@@ -60,6 +95,16 @@ export async function POST(req: NextRequest) {
       where: { id: conversationId },
       data: { updatedAt: new Date() },
     });
+
+    const recipientId = conversation.userOneId === user.id ? conversation.userTwoId : conversation.userOneId;
+
+    createNotificationIfAllowed({
+      userId: recipientId,
+      type: "MESSAGE",
+      title: "Nieuw chatbericht",
+      body: hasImage ? "Nieuwe foto ontvangen" : composedText.slice(0, 140),
+      data: { conversationId },
+    }).catch(() => {});
 
     return NextResponse.json(message);
   } catch (error) {
@@ -106,6 +151,15 @@ export async function GET(req: NextRequest) {
         { status: 403 }
       );
     }
+
+    await prisma.message.updateMany({
+      where: {
+        conversationId,
+        authorId: { not: user.id },
+        readAt: null,
+      },
+      data: { readAt: new Date() },
+    });
 
     // Get messages
     const messages = await prisma.message.findMany({

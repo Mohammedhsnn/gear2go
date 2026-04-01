@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
+import { createNotificationIfAllowed } from "@/lib/notifications";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(req: Request) {
@@ -47,17 +48,13 @@ export async function POST(req: Request) {
   });
 
   // Create a notification for the owner (best-effort)
-  prisma.notification
-    .create({
-      data: {
-        userId: item.ownerId,
-        type: "REVIEW",
-        title: "Nieuwe review",
-        body: text ? text.slice(0, 140) : "Je item heeft een nieuwe review ontvangen.",
-        data: { itemId, reviewId: review.id },
-      },
-    })
-    .catch(() => {});
+  createNotificationIfAllowed({
+    userId: item.ownerId,
+    type: "REVIEW",
+    title: "Nieuwe review",
+    body: text ? text.slice(0, 140) : "Je item heeft een nieuwe review ontvangen.",
+    data: { itemId, reviewId: review.id },
+  }).catch(() => {});
 
   return NextResponse.json({ review });
 }

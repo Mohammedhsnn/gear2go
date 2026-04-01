@@ -64,9 +64,12 @@ export function DesktopTopNav({ active }: DesktopTopNavProps) {
               <span className="material-symbols-outlined cursor-pointer hover:bg-surface-container-highest p-2 transition-all">
                 notifications
               </span>
-              <span className="material-symbols-outlined cursor-pointer hover:bg-surface-container-highest p-2 transition-all">
+              <Link
+                className="material-symbols-outlined cursor-pointer hover:bg-surface-container-highest p-2 transition-all text-on-surface no-underline"
+                href="/favorieten"
+              >
                 favorite
-              </span>
+              </Link>
               <Link
                 className="material-symbols-outlined cursor-pointer hover:bg-surface-container-highest p-2 transition-all text-on-surface no-underline"
                 href="/ontdekken"

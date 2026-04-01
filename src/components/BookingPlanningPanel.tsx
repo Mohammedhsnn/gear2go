@@ -1,11 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 type BookingStatus = "REQUESTED" | "CONFIRMED" | "DECLINED";
 
 type Booking = {
   id: string;
+  conversationId?: string | null;
   status: BookingStatus;
   startDate: string;
   endDate: string;
@@ -57,6 +59,19 @@ function badgeClass(status: BookingStatus): string {
     return "bg-[#dcfce7] text-[#166534]";
   }
   return "bg-[#fee2e2] text-[#991b1b]";
+}
+
+function buildChatHref(booking: Booking, mode: "owner" | "renter"): string {
+  const counterpart =
+    mode === "owner"
+      ? booking.renter.displayName || booking.renter.email
+      : booking.owner.displayName || booking.owner.email;
+
+  const conversationPart = booking.conversationId
+    ? `&conversationId=${encodeURIComponent(booking.conversationId)}`
+    : "";
+
+  return `/berichten?owner=${encodeURIComponent(counterpart)}&product=${encodeURIComponent(booking.item.title)}&itemId=${encodeURIComponent(booking.item.id)}${conversationPart}`;
 }
 
 export function BookingPlanningPanel() {
@@ -201,6 +216,13 @@ export function BookingPlanningPanel() {
                         </button>
                       </div>
                     ) : null}
+
+                    <Link
+                      href={buildChatHref(booking, "owner")}
+                      className="mt-3 inline-flex text-xs font-bold uppercase tracking-widest text-primary underline underline-offset-4 hover:text-on-surface-variant"
+                    >
+                      Ga naar gesprek
+                    </Link>
                   </article>
                 ))}
               </div>
@@ -235,6 +257,13 @@ export function BookingPlanningPanel() {
                       {formatDate(booking.startDate)} - {formatDate(booking.endDate)}
                     </div>
                     <div className="mt-1 text-sm font-bold">{formatEUR(booking.totalCents)}</div>
+
+                    <Link
+                      href={buildChatHref(booking, "renter")}
+                      className="mt-3 inline-flex text-xs font-bold uppercase tracking-widest text-primary underline underline-offset-4 hover:text-on-surface-variant"
+                    >
+                      Ga naar gesprek
+                    </Link>
                   </article>
                 ))}
               </div>

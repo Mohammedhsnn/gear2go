@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
+import { createNotificationIfAllowed } from "@/lib/notifications";
 import { prisma } from "@/lib/prisma";
 
 function parseISODateAtMidnight(value: string): Date | null {
@@ -28,12 +29,23 @@ export async function GET(req: Request) {
       item: { select: { id: true, title: true, imageUrl: true, pricePerDayCents: true } },
       renter: { select: { id: true, displayName: true, email: true } },
       owner: { select: { id: true, displayName: true, email: true } },
+      conversations: {
+        select: { id: true },
+        take: 1,
+        orderBy: { updatedAt: "desc" },
+      },
     },
     orderBy: [{ createdAt: "desc" }],
     take: 100,
   });
 
-  return NextResponse.json({ bookings });
+  return NextResponse.json({
+    bookings: bookings.map((booking) => ({
+      ...booking,
+      conversationId: booking.conversations[0]?.id ?? null,
+      conversations: undefined,
+    })),
+  });
 }
 
 export async function POST(req: Request) {
@@ -120,15 +132,35 @@ export async function POST(req: Request) {
     },
   });
 
-  await prisma.notification.create({
-    data: {
-      userId: item.ownerId,
-      type: "ITEM",
-      title: "Nieuwe boekingsaanvraag",
-      body: `${item.title} heeft een nieuwe aanvraag (${startDateISO} t/m ${endDateISO}).`,
-      data: { bookingId: booking.id, status: booking.status },
+  const sortedIds = [user.id, item.ownerId].sort();
+  const conversation = await prisma.conversation.upsert({
+    where: {
+      userOneId_userTwoId: {
+        userOneId: sortedIds[0],
+        userTwoId: sortedIds[1],
+      },
     },
+    update: {
+      itemId: item.id,
+      bookingId: booking.id,
+      updatedAt: new Date(),
+    },
+    create: {
+      userOneId: sortedIds[0],
+      userTwoId: sortedIds[1],
+      itemId: item.id,
+      bookingId: booking.id,
+    },
+    select: { id: true },
   });
 
-  return NextResponse.json({ booking }, { status: 201 });
+  await createNotificationIfAllowed({
+    userId: item.ownerId,
+    type: "ITEM",
+    title: "Nieuwe boekingsaanvraag",
+    body: `${item.title} heeft een nieuwe aanvraag (${startDateISO} t/m ${endDateISO}).`,
+    data: { bookingId: booking.id, status: booking.status },
+  });
+
+  return NextResponse.json({ booking, conversationId: conversation.id }, { status: 201 });
 }

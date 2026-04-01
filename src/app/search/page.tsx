@@ -12,6 +12,11 @@ export default async function SearchPage({
   const { q } = await searchParams;
   const queryRaw = (q ?? "").trim();
   const user = await getCurrentUser();
+  const homeLocation = {
+    address: user?.homeAddress ?? null,
+    lat: user?.homeLat ?? null,
+    lng: user?.homeLng ?? null,
+  };
 
   return (
     <div className="bg-surface text-on-surface min-h-dvh">
@@ -74,7 +79,7 @@ export default async function SearchPage({
           </div>
         </section>
 
-        <HomeCategoryBrowsing />
+        <HomeCategoryBrowsing homeLocation={homeLocation} />
       </main>
 
       <footer className="bg-primary text-on-primary flex flex-col md:flex-row justify-between items-center px-12 py-20 w-full mt-20">
