@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { BookingReviewForm } from "@/components/BookingReviewForm";
 
 type BookingStatus = "REQUESTED" | "CONFIRMED" | "DECLINED";
 
@@ -28,6 +29,11 @@ type Booking = {
     displayName: string | null;
     email: string;
   };
+  reviews?: Array<{
+    id: string;
+    authorId: string;
+    direction: "RENTER_TO_OWNER" | "OWNER_TO_RENTER";
+  }>;
 };
 
 function formatDate(value: string): string {
@@ -36,6 +42,13 @@ function formatDate(value: string): string {
     month: "2-digit",
     year: "numeric",
   }).format(new Date(value));
+}
+
+function canReviewAfterEndDate(endDateISO: string): boolean {
+  const endDate = new Date(endDateISO);
+  if (Number.isNaN(endDate.getTime())) return false;
+  const reviewOpensAt = new Date(endDate.getTime() + 24 * 60 * 60 * 1000);
+  return Date.now() >= reviewOpensAt.getTime();
 }
 
 function formatEUR(cents: number): string {
@@ -67,11 +80,11 @@ function buildChatHref(booking: Booking, mode: "owner" | "renter"): string {
       ? booking.renter.displayName || booking.renter.email
       : booking.owner.displayName || booking.owner.email;
 
-  const conversationPart = booking.conversationId
-    ? `&conversationId=${encodeURIComponent(booking.conversationId)}`
-    : "";
+  if (booking.conversationId) {
+    return `/berichten/${encodeURIComponent(booking.conversationId)}`;
+  }
 
-  return `/berichten?owner=${encodeURIComponent(counterpart)}&product=${encodeURIComponent(booking.item.title)}&itemId=${encodeURIComponent(booking.item.id)}${conversationPart}`;
+  return `/berichten?owner=${encodeURIComponent(counterpart)}&product=${encodeURIComponent(booking.item.title)}&itemId=${encodeURIComponent(booking.item.id)}`;
 }
 
 export function BookingPlanningPanel() {
@@ -179,6 +192,11 @@ export function BookingPlanningPanel() {
               <div className="space-y-4">
                 {ownerBookings.map((booking) => (
                   <article key={booking.id} className="bg-surface p-4 border border-outline-variant/20">
+                    {/** Reviews become available only after the booking end date. */}
+                    {(() => {
+                      const reviewAllowed = canReviewAfterEndDate(booking.endDate);
+                      return (
+                        <>
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="font-bold uppercase tracking-tight">{booking.item.title}</p>
@@ -195,6 +213,13 @@ export function BookingPlanningPanel() {
                       {formatDate(booking.startDate)} - {formatDate(booking.endDate)}
                     </div>
                     <div className="mt-1 text-sm font-bold">{formatEUR(booking.totalCents)}</div>
+
+                    <Link
+                      href={`/users/${encodeURIComponent(booking.renter.id)}`}
+                      className="mt-2 inline-flex text-[10px] font-bold uppercase tracking-widest text-primary underline underline-offset-4 hover:text-on-surface-variant"
+                    >
+                      Bekijk huurderprofiel
+                    </Link>
 
                     {booking.status === "REQUESTED" ? (
                       <div className="mt-4 grid grid-cols-2 gap-3">
@@ -223,6 +248,35 @@ export function BookingPlanningPanel() {
                     >
                       Ga naar gesprek
                     </Link>
+
+                    {booking.status === "CONFIRMED" ? (
+                      !reviewAllowed ? (
+                        <div className="mt-4 border border-outline-variant/20 bg-surface-container-low p-3">
+                          <p className="text-[11px] uppercase tracking-widest text-on-surface-variant font-bold">
+                            Review beschikbaar na {formatDate(booking.endDate)}
+                          </p>
+                        </div>
+                      ) : booking.reviews?.some(
+                        (review) =>
+                          review.authorId === booking.owner.id &&
+                          review.direction === "OWNER_TO_RENTER",
+                      ) ? (
+                        <div className="mt-4 border border-primary/30 bg-surface-container-low p-3">
+                          <p className="text-[11px] uppercase tracking-widest text-primary font-bold">
+                            Review voor huurder is geplaatst
+                          </p>
+                        </div>
+                      ) : (
+                        <BookingReviewForm
+                          bookingId={booking.id}
+                          direction="OWNER_TO_RENTER"
+                          onSubmitted={load}
+                        />
+                      )
+                    ) : null}
+                        </>
+                      );
+                    })()}
                   </article>
                 ))}
               </div>
@@ -241,6 +295,11 @@ export function BookingPlanningPanel() {
               <div className="space-y-4">
                 {renterBookings.map((booking) => (
                   <article key={booking.id} className="bg-surface p-4 border border-outline-variant/20">
+                    {/** Reviews become available only after the booking end date. */}
+                    {(() => {
+                      const reviewAllowed = canReviewAfterEndDate(booking.endDate);
+                      return (
+                        <>
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="font-bold uppercase tracking-tight">{booking.item.title}</p>
@@ -264,6 +323,35 @@ export function BookingPlanningPanel() {
                     >
                       Ga naar gesprek
                     </Link>
+
+                    {booking.status === "CONFIRMED" ? (
+                      !reviewAllowed ? (
+                        <div className="mt-4 border border-outline-variant/20 bg-surface-container-low p-3">
+                          <p className="text-[11px] uppercase tracking-widest text-on-surface-variant font-bold">
+                            Review beschikbaar na {formatDate(booking.endDate)}
+                          </p>
+                        </div>
+                      ) : booking.reviews?.some(
+                        (review) =>
+                          review.authorId === booking.renter.id &&
+                          review.direction === "RENTER_TO_OWNER",
+                      ) ? (
+                        <div className="mt-4 border border-primary/30 bg-surface-container-low p-3">
+                          <p className="text-[11px] uppercase tracking-widest text-primary font-bold">
+                            Review voor verhuurder is geplaatst
+                          </p>
+                        </div>
+                      ) : (
+                        <BookingReviewForm
+                          bookingId={booking.id}
+                          direction="RENTER_TO_OWNER"
+                          onSubmitted={load}
+                        />
+                      )
+                    ) : null}
+                        </>
+                      );
+                    })()}
                   </article>
                 ))}
               </div>

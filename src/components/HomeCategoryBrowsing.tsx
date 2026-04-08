@@ -1,12 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
-import { divIcon, latLngBounds, type LatLngExpression } from "leaflet";
+import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import { ProductCard, type ProductCardModel } from "@/components/ProductCard";
-import { categories, formatEUR, type CategoryId } from "@/data/catalog";
+import { categories, type CategoryId } from "@/data/catalog";
 
 type HomeCategoryBrowsingProps = {
   homeLocation?: {
@@ -33,8 +31,15 @@ type BrowseItem = ProductCardModel & {
   point: { lat: number; lng: number } | null;
 };
 
-const DEFAULT_CENTER: LatLngExpression = [52.3676, 4.9041];
-const RADIUS_OPTIONS = [5, 10, 25, 50, 100] as const;
+const RADIUS_OPTIONS = [5, 10, 25] as const;
+
+const HomeCategoryMap = dynamic(
+  () => import("@/components/HomeCategoryMap").then((m) => m.HomeCategoryMap),
+  {
+    ssr: false,
+    loading: () => <div className="h-[420px] w-full bg-surface-container-low" />,
+  },
+);
 
 const ICONS: Record<CategoryId, string> = {
   watersporten: "kayaking",
@@ -47,20 +52,6 @@ const ICONS: Record<CategoryId, string> = {
 
 const fallbackImage =
   "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=1200&q=80";
-
-const itemMarkerIcon = divIcon({
-  className: "",
-  html: '<span style="display:block;width:14px;height:14px;border-radius:9999px;background:#166534;border:2px solid #fff;box-shadow:0 0 0 2px #166534;"></span>',
-  iconSize: [14, 14],
-  iconAnchor: [7, 7],
-});
-
-const homeMarkerIcon = divIcon({
-  className: "",
-  html: '<span style="display:block;width:16px;height:16px;border-radius:9999px;background:#b91c1c;border:3px solid #fff;box-shadow:0 0 0 2px #b91c1c;"></span>',
-  iconSize: [16, 16],
-  iconAnchor: [8, 8],
-});
 
 function parsePointFromLocation(location?: string | null): { lat: number; lng: number } | null {
   if (!location) return null;
@@ -96,40 +87,12 @@ function normalize(input: string) {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
-function FitMapToMarkers({
-  homePoint,
-  markers,
-}: {
-  homePoint: { lat: number; lng: number } | null;
-  markers: Array<{ lat: number; lng: number }>;
-}) {
-  const map = useMap();
-
-  useEffect(() => {
-    const points = [...markers];
-    if (homePoint) {
-      points.push(homePoint);
-    }
-
-    if (points.length === 0) return;
-
-    if (points.length === 1) {
-      map.setView([points[0].lat, points[0].lng], Math.max(map.getZoom(), 12));
-      return;
-    }
-
-    const bounds = latLngBounds(points.map((point) => [point.lat, point.lng] as [number, number]));
-    map.fitBounds(bounds, { padding: [32, 32], maxZoom: 13 });
-  }, [homePoint, map, markers]);
-
-  return null;
-}
-
 export function HomeCategoryBrowsing({ homeLocation = null }: HomeCategoryBrowsingProps) {
   const searchParams = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState<"all" | CategoryId>("all");
   const [sortBy, setSortBy] = useState<"priceAsc" | "none">("priceAsc");
   const [radiusKm, setRadiusKm] = useState<number | "all">(25);
+  const [selectedMapItemId, setSelectedMapItemId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<BrowseItem[]>([]);
   const q = (searchParams.get("q") ?? "").trim();
@@ -262,8 +225,19 @@ export function HomeCategoryBrowsing({ homeLocation = null }: HomeCategoryBrowsi
     return scoped;
   }, [homePoint, items, q, radiusKm, selectedCategory, sortBy]);
 
-  const mapItems = filteredAndSorted.filter((item) => item.point);
-  const mapCenter: LatLngExpression = homePoint ? [homePoint.lat, homePoint.lng] : DEFAULT_CENTER;
+  const mapItems = filteredAndSorted.filter(
+    (item): item is BrowseItem & { point: { lat: number; lng: number } } => Boolean(item.point),
+  );
+
+  const selectedMapItem = useMemo(
+    () => mapItems.find((item) => item.id === selectedMapItemId) ?? null,
+    [mapItems, selectedMapItemId],
+  );
+
+  const selectedMapItemDistance = useMemo(() => {
+    if (!homePoint || !selectedMapItem?.point) return null;
+    return distanceKm(homePoint, selectedMapItem.point);
+  }, [homePoint, selectedMapItem]);
 
   return (
     <section className="py-20 md:py-28 px-6 md:px-12 bg-surface">
@@ -356,43 +330,77 @@ export function HomeCategoryBrowsing({ homeLocation = null }: HomeCategoryBrowsi
 
       <div className="mb-10 border border-outline-variant/30 overflow-hidden bg-surface-container-low">
         <div className="h-[420px] w-full">
-          <MapContainer center={mapCenter} zoom={11} className="h-full w-full" scrollWheelZoom>
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <FitMapToMarkers
-              homePoint={homePoint}
-              markers={mapItems.map((item) => ({ lat: item.point!.lat, lng: item.point!.lng }))}
-            />
-            {homePoint ? (
-              <Marker position={[homePoint.lat, homePoint.lng]} icon={homeMarkerIcon}>
-                <Popup>
-                  <div>
-                    <p className="font-semibold">Jouw thuisadres</p>
-                    <p>{homeLocation?.address ?? "Ingesteld"}</p>
-                  </div>
-                </Popup>
-              </Marker>
-            ) : null}
-            {mapItems.map((item) => (
-              <Marker key={`map-${item.id}`} position={[item.point!.lat, item.point!.lng]} icon={itemMarkerIcon}>
-                <Popup>
-                  <div className="space-y-1 min-w-[180px]">
-                    <p className="font-semibold leading-tight">{item.title}</p>
-                    <p className="text-xs text-slate-600">{item.ownerName}</p>
-                    <p className="text-xs">{item.location}</p>
-                    <p className="text-sm font-bold">{formatEUR(item.pricePerDayCents)} / dag</p>
-                    <Link className="text-sm underline" href={`/products/${encodeURIComponent(item.id)}`}>
-                      Bekijk verhuurpost
-                    </Link>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MapContainer>
+          <HomeCategoryMap
+            homePoint={homePoint}
+            homeAddress={homeLocation?.address ?? null}
+            mapItems={mapItems}
+            selectedItemId={selectedMapItemId}
+            selectedRadiusKm={radiusKm}
+            onSelectItem={setSelectedMapItemId}
+            onClearSelection={() => setSelectedMapItemId(null)}
+          />
         </div>
       </div>
+
+      {selectedMapItem ? (
+        <div className="fixed left-0 right-0 bottom-16 md:bottom-6 z-[1200] px-4 md:px-8 pointer-events-none">
+          <div className="max-w-3xl mx-auto bg-surface-container-low border border-outline-variant/30 shadow-2xl pointer-events-auto overflow-hidden">
+            <div className="grid grid-cols-12">
+              <div className="col-span-4 md:col-span-3 h-28 md:h-32 bg-surface-container-high overflow-hidden">
+                <img
+                  src={selectedMapItem.imageUrl}
+                  alt={selectedMapItem.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="col-span-8 md:col-span-9 p-4 md:p-5">
+                <div className="flex items-start justify-between gap-3 mb-2">
+                  <h3 className="font-headline text-lg md:text-2xl font-black uppercase tracking-tight leading-tight">
+                    {selectedMapItem.title}
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedMapItemId(null)}
+                    className="material-symbols-outlined text-on-surface-variant hover:text-primary"
+                    aria-label="Sluit quick view"
+                  >
+                    close
+                  </button>
+                </div>
+                <div className="flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-widest text-on-surface-variant mb-3">
+                  <span>{selectedMapItem.location}</span>
+                  <span>•</span>
+                  <span>{selectedMapItem.ownerName}</span>
+                  {selectedMapItemDistance != null ? (
+                    <>
+                      <span>•</span>
+                      <span>{selectedMapItemDistance.toFixed(1)} km</span>
+                    </>
+                  ) : null}
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <p className="font-headline font-black text-xl md:text-2xl text-primary">
+                    {new Intl.NumberFormat("nl-NL", {
+                      style: "currency",
+                      currency: "EUR",
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }).format(selectedMapItem.pricePerDayCents / 100)}
+                    <span className="text-xs font-body text-on-surface-variant"> / dag</span>
+                  </p>
+                  <a
+                    href={`/products/${encodeURIComponent(selectedMapItem.id)}`}
+                    className="inline-flex items-center gap-2 bg-primary text-on-primary px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-surface-dim hover:text-primary transition-colors"
+                  >
+                    Bekijk item
+                    <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {loading ? (
         <div className="bg-surface-container-low p-8 mb-6">

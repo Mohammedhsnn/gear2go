@@ -29,6 +29,13 @@ export async function GET(req: Request) {
       item: { select: { id: true, title: true, imageUrl: true, pricePerDayCents: true } },
       renter: { select: { id: true, displayName: true, email: true } },
       owner: { select: { id: true, displayName: true, email: true } },
+      reviews: {
+        select: {
+          id: true,
+          authorId: true,
+          direction: true,
+        },
+      },
       conversations: {
         select: { id: true },
         take: 1,
