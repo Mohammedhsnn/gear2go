@@ -20,7 +20,7 @@ export default async function DashboardItemEditPage({
   const item = await prisma.item.findFirst({
     where: {
       id,
-      ownerId: user.id,
+      ...(user.isAdmin ? {} : { ownerId: user.id }),
     },
     select: {
       id: true,
@@ -64,7 +64,7 @@ export default async function DashboardItemEditPage({
         </p>
 
         <div className="bg-surface-container-low p-6 md:p-10">
-          <DashboardItemEditForm item={item} />
+          <DashboardItemEditForm item={item} canDelete={true} />
         </div>
       </section>
     </main>

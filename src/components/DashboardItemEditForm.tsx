@@ -15,9 +15,10 @@ type DashboardItemEditFormProps = {
     imageUrl: string | null;
     pricePerDayCents: number;
   };
+  canDelete?: boolean;
 };
 
-export function DashboardItemEditForm({ item }: DashboardItemEditFormProps) {
+export function DashboardItemEditForm({ item, canDelete = false }: DashboardItemEditFormProps) {
   const router = useRouter();
   const [title, setTitle] = useState(item.title);
   const [subtitle, setSubtitle] = useState(item.subtitle ?? "");
@@ -27,6 +28,7 @@ export function DashboardItemEditForm({ item }: DashboardItemEditFormProps) {
   const [pickedImageName, setPickedImageName] = useState<string | null>(null);
   const [pricePerDay, setPricePerDay] = useState((item.pricePerDayCents / 100).toString());
   const [loading, setLoading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
@@ -53,6 +55,33 @@ export function DashboardItemEditForm({ item }: DashboardItemEditFormProps) {
     setPickedImageName(file.name);
     const dataUrl = await fileToDataUrl(file);
     setImageUrl(dataUrl);
+  }
+
+  async function onDelete() {
+    if (!canDelete) return;
+    const confirmed = window.confirm("Weet je zeker dat je deze listing wilt verwijderen?");
+    if (!confirmed) return;
+
+    setDeleting(true);
+    setError(null);
+    setSaved(false);
+
+    try {
+      const res = await fetch(`/api/items/${encodeURIComponent(item.id)}`, {
+        method: "DELETE",
+      });
+
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        setError(data.error || "Verwijderen mislukt.");
+        return;
+      }
+
+      router.push("/dashboard/my-gear");
+      router.refresh();
+    } finally {
+      setDeleting(false);
+    }
   }
 
   async function onSubmit(e: FormEvent) {
@@ -180,11 +209,22 @@ export function DashboardItemEditForm({ item }: DashboardItemEditFormProps) {
 
       <button
         className="md:col-span-2 bg-primary text-on-primary py-5 font-bold uppercase tracking-widest hover:bg-surface-dim hover:text-primary transition-all disabled:opacity-50"
-        disabled={loading}
+        disabled={loading || deleting}
         type="submit"
       >
         {loading ? "OPSLAAN..." : "OPSLAAN"}
       </button>
+
+      {canDelete ? (
+        <button
+          className="md:col-span-2 border border-error text-error py-4 font-bold uppercase tracking-widest hover:bg-error hover:text-on-primary transition-all disabled:opacity-50"
+          disabled={loading || deleting}
+          onClick={onDelete}
+          type="button"
+        >
+          {deleting ? "VERWIJDEREN..." : "VERWIJDER LISTING"}
+        </button>
+      ) : null}
     </form>
   );
 }

@@ -76,7 +76,6 @@ async function createWelcomeInboxForUser(user: BasicUser) {
 
 export async function POST(req: Request) {
   try {
-<<<<<<< HEAD
     const body = (await req.json().catch(() => null)) as
       | {
           email?: string;

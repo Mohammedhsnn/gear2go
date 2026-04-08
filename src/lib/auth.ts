@@ -55,7 +55,11 @@ export async function destroySession(): Promise<void> {
   const token = jar.get(COOKIE_NAME)?.value;
   if (token) {
     const tokenHash = sha256Hex(token);
-    await prisma.session.deleteMany({ where: { tokenHash } });
+    try {
+      await prisma.session.deleteMany({ where: { tokenHash } });
+    } catch {
+      // If the DB is temporarily unreachable, still clear the cookie.
+    }
   }
   jar.set(COOKIE_NAME, "", { path: "/", expires: new Date(0) });
 }
@@ -66,10 +70,16 @@ export async function getCurrentUser() {
   if (!token) return null;
   const tokenHash = sha256Hex(token);
 
-  const session = await prisma.session.findUnique({
-    where: { tokenHash },
-    include: { user: true },
-  });
+  let session;
+  try {
+    session = await prisma.session.findUnique({
+      where: { tokenHash },
+      include: { user: true },
+    });
+  } catch {
+    // Keep public pages usable if the database is temporarily unavailable.
+    return null;
+  }
   if (!session) return null;
   if (session.expiresAt.getTime() < Date.now()) {
     await prisma.session.delete({ where: { id: session.id } });
